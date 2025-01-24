@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tijana Minić</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <img src="/Users/tijanaminic/Documents/GitHub/tijanaminic.github.io/images//tiksi3.png" alt="Header Logo" class="header-image" />    
+    <nav>
+      <ul>
+        <li><a href="#" onclick="showPage('about')">About Me</a></li>
+        <li><a href="#" onclick="showPage('publications')">Publications</a></li>
+        <li><a href="#" onclick="showPage('blog')">Thoughts</a></li>
+        <li><a href="#" onclick="showPage('food')">Food recs</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+
+    <section id="about" class="page">
+        <h2>Hi everyone!</h2>
+        <div class="about">
+          <div class="about-text">
+            <p>
+              My name is Tijana Minić, and I am currently waiting to find out where I'll start as a PhD student! :D
+              I completed my undergraduate degree at Seton Hall University, where I double-majored in Psychology and Computer Science.
+              My research focused on developing visualization tools for FSM, a DSL embedded in Racket for the Formal Languages
+              and Automata Theory classroom. <br><br>
+      
+              The little stickers you see in the header represent things I'm passionate about and can talk about for days.
+              Computer Science, obviously. I fight imposter syndrome by learning from the incredible people I meet.
+              I also love trying new food (and wine). Oysters and creme brulee are the two that I love that came to mind
+              first. I visit a lot of cool restaurants wherever I go, so if you want my recommendations, look <a href="#" onclick="showPage('food')">here</a>. <br><br>
+              I am also a niche perfume enthusiast, and I have a deep appreciation for scents. My signature perfume
+              is Nudiflorum by Nasomatto (I'm on my third bottle!). I try to avoid becoming a full-blown perfume collector,
+              especially now that I'm preparing to live on a PhD salary for the next half-decade or so. <br><br>
+      
+              Deer are my favorite animals, though I've yet to visit a deer farm.
+              I'm also well-traveled, and have lived interchangeably between Serbia, the US, and Dubai.
+            </p>
+          </div>
+          <div class="about-image">
+            <img src="/Users/tijanaminic/Documents/GitHub/tijanaminic.github.io/images//tiksi-headshot.png" alt="Tijana Minić Headshot" />
+            <div class="contact-icons">
+                <a href="mailto:tiksiminic@gmail.com" target="_blank">
+                  <img src="/Users/tijanaminic/Documents/GitHub/tijanaminic.github.io/images//email.png" alt="Email Icon" />
+                </a>
+                <a href="https://github.com/tijanaminic1" target="_blank">
+                  <img src="/Users/tijanaminic/Documents/GitHub/tijanaminic.github.io/images//github.png" alt="GitHub Icon" />
+                </a>
+                </a>
+                <a href="https://twitter.com/tiksiminic" target="_blank">
+                  <img src="/Users/tijanaminic/Documents/GitHub/tijanaminic.github.io/images//twitter.png" alt="Twitter Icon" />
+                </a>
+                <a href="https://bsky.app/profile/tijanaminic.bsky.social" target="_blank">
+                  <img src="/Users/tijanaminic/Documents/GitHub/tijanaminic.github.io/images//bsky.jpg" alt="Bluesky Icon" />
+                </a>
+              </div>
+          </div>
+        </div>
+      </section>
+      
+
+
+
+    <section id="publications" class="page hidden">
+        <h2>On this page you'll find all of my publications!</h2>
+        <!-- Sorting Dropdown -->
+        <div class="sorting">
+          <label for="sort-options">Sort by:</label>
+          <select id="sort-options">
+            <option value="oldest">Oldest First</option>
+            <option value="newest">Newest First</option>
+          </select>
+        </div>
+      
+        <div class="gallery" id="publication-gallery">
+          <div class="publication" data-date="2023-10-01">
+            <p>SCHEME 2023</p>
+            <a href="https://arxiv.org/pdf/2310.08248" target="_blank">
+              <img src="/Users/tijanaminic/Documents/GitHub/tijanaminic.github.io/images//publications/ndfatodfa.png" 
+                   alt="Visualizing a Nondeterministic to Deterministic Finite-State Machine Transformation" />
+            </a>
+          </div>
+          <div class="publication" data-date="2024-02-15">
+            <p>TFPiE 2024</p>
+            <a href="https://arxiv.org/pdf/2407.08088" target="_blank">
+              <img src="/Users/tijanaminic/Documents/GitHub/tijanaminic.github.io/images//publications/ndfa2regexp.png" 
+                   alt="Finite-State Automaton To/From Regular Expression Visualization" />
+            </a>
+          </div>
+          <div class="publication" data-date="2024-06-20">
+            <p>ITiCSE 2024</p>
+            <a href="https://dl.acm.org/doi/pdf/10.1145/3649217.3653641" target="_blank">
+              <img src="/Users/tijanaminic/Documents/GitHub/tijanaminic.github.io/images//publications/ndfa2dfa.png" 
+                   alt="Nondeterministic to Deterministic Finite-State Machine Visualization" />
+            </a>
+          </div>
+          <div class="publication" data-date="2024-10-05">
+            <p>SPLASH 2024 ACM Student Research Competition</p>
+            <a href="https://dl.acm.org/doi/pdf/10.1145/3689491.3689977" target="_blank">
+              <img src="/Users/tijanaminic/Documents/GitHub/tijanaminic.github.io/images//publications/grammars.png" 
+                   alt="Grammar Derivation Visualization in Automata Theory" />
+            </a>
+          </div>
+          <div class="publication" data-date="2024-11-12">
+            <p>SPLASH-E 2024</p>
+            <a href="https://dl.acm.org/doi/pdf/10.1145/3689493.3689979" target="_blank">
+              <img src="/Users/tijanaminic/Documents/GitHub/tijanaminic.github.io/images//publications/ctms.png" 
+                   alt="Visualizing Composed Turing Machines" />
+            </a>
+          </div>
+        </div>
+      </section>
+      
+      
+      
+
+    <section id="blog" class="page hidden">
+      <h2>Thoughts</h2>
+      <div class="sorting">
+        <label for="sort-options">Sort by:</label>
+        <select id="sort-options">
+          <option value="oldest">Oldest First</option>
+          <option value="newest">Newest First</option>
+        </select>
+      </div>
+    
+      <div class="gallery" id="blog-gallery">
+        <div class="publication" data-date="2023-10-01">
+          <p>Post template</p>
+          <a href="https://arxiv.org/pdf/2310.08248" target="_blank">
+            <img src="/Users/tijanaminic/Documents/GitHub/tijanaminic.github.io/images//publications/ndfatodfa.png" 
+                 alt="Visualizing a Nondeterministic to Deterministic Finite-State Machine Transformation" />
+          </a>
+        </div>
+      </div>
+    </section>
+
+
+    <section id="food" class="page hidden">
+        <h2>Restaurant recommendations</h2>
+        <div class="sorting">
+          <label for="sort-options">Sort by:</label>
+          <select id="sort-options">
+            <option value="oldest">Oldest First</option>
+            <option value="newest">Newest First</option>
+          </select>
+        </div>
+      
+        <div class="gallery" id="blog-gallery">
+          <div class="publication" data-date="2023-10-01">
+            <p>Post template</p>
+            <a href="https://arxiv.org/pdf/2310.08248" target="_blank">
+              <img src="/Users/tijanaminic/Documents/GitHub/tijanaminic.github.io/images//publications/ndfatodfa.png" 
+                   alt="Visualizing a Nondeterministic to Deterministic Finite-State Machine Transformation" />
+            </a>
+          </div>
+        </div>
+      </section>
+
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Tijana Minić. All Rights Reserved.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
