@@ -39,25 +39,26 @@ body {
   
   nav ul li {
     display:inline;
-    margin: 0 15px;
+    margin: 0 25px;
     font-size: 20px;
     position: relative;
 
   }
 
   nav ul li::before {
-    content: ''; 
+    content: '';
     position: absolute;
-    left: -20px;
+    left: -40px; 
     top: 50%;
     transform: translateY(-50%);
-    width: 20px; 
-    height: 20px;
-    background-image: url('images/bow.png'); 
+    width: 30px; 
+    height: 30px;
+    background-image: url('images/bow.png');
+    background-size: cover; 
     background-repeat: no-repeat;
     opacity: 0; 
-    transition: opacity 0.3s ease-in-out; 
-  }
+}
+
   
 
   nav ul li:hover::before {
