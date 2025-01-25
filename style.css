@@ -57,12 +57,12 @@ body {
     background-size: cover; 
     background-repeat: no-repeat;
     opacity: 0; 
+    transition: opacity 0.2s ease-in-out;
 }
 
-  
-
-  nav ul li:hover::before {
-    opacity: 1; 
+  nav ul li:hover::before, 
+  nav ul li.active::before {
+    opacity: 1;  
   }
   
   nav ul li a {
