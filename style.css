@@ -72,6 +72,8 @@ body {
   main {
     padding: 2rem;
   }
+
+  
   
   footer {
     background-color: #f4a9c5;
@@ -213,12 +215,52 @@ body {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
 }
 
+
 #map {
   width: 100%;
   height: 80vh;
   border-radius: 12px;
   box-shadow: 0 0 10px rgba(0,0,0,0.2);
 }
+
+#restaurant-links {
+  margin-top: 2rem;
+  font-size: 1.1rem;
+  color: #e75480;
+}
+
+.country-group {
+  margin-bottom: 2rem;
+}
+
+.country-group h4 {
+  margin-bottom: 0.5rem;
+  font-size: 1.3rem;
+  color: #e75480;
+  font-weight: normal;
+}
+
+.restaurant-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.restaurant-list a {
+  color: #e75480;
+  text-decoration: none;
+  padding: 3px 8px;
+  border-radius: 8px;
+  background-color: rgba(231, 84, 128, 0.08);
+  white-space: nowrap;         /* prevents line break in a single name */
+  transition: background-color 0.2s ease;
+}
+
+.restaurant-list a:hover {
+  background-color: rgba(231, 84, 128, 0.2);
+}
+
+
 
 
 

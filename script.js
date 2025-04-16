@@ -71,3 +71,46 @@ function initMap() {
 
   mapInitialized = true;
 }
+
+
+function populateRestaurantList() {
+  const listContainer = document.getElementById('restaurant-links');
+  if (!listContainer) return;
+
+  // Clear any existing content
+  listContainer.innerHTML = '';
+
+  // Group by country
+  const grouped = {};
+  restaurantPins.forEach(restaurant => {
+    if (!grouped[restaurant.city]) {
+      grouped[restaurant.city] = [];
+    }
+    grouped[restaurant.city].push(restaurant);
+  });
+
+  // For each country, create a group
+  Object.keys(grouped).sort().forEach(city => {
+    const cityHeading = document.createElement('h4');
+    cityHeading.textContent = city;
+    listContainer.appendChild(cityHeading);
+
+    const ul = document.createElement('ul');
+    ul.className = 'restaurant-subgroup';
+
+    grouped[city].forEach(restaurant => {
+      const li = document.createElement('li');
+      const link = document.createElement('a');
+      link.href = restaurant.blogLink;
+      link.textContent = restaurant.name;
+      li.appendChild(link);
+      ul.appendChild(li);
+    });
+
+    listContainer.appendChild(ul);
+  });
+}
+
+
+// Call this when the page loads
+document.addEventListener('DOMContentLoaded', populateRestaurantList);
