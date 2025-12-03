@@ -156,23 +156,23 @@ async function renderBlogList(sort = "oldest") {
         mdBody = text.replace(fm[0], "").trimStart();
       }
 
-      // Remove H1 title (“# Something”)
+      // Remove H1 title
       if (mdBody.startsWith("# ")) {
         const i = mdBody.indexOf("\n");
         if (i !== -1) mdBody = mdBody.slice(i + 1).trimStart();
       }
 
-      // Extract first entire section (until next ##)
+      // Extract first section until next “##”
       let end = mdBody.search(/\n## /);
       if (end === -1) end = mdBody.length;
       let firstSection = mdBody.slice(0, end).trim();
 
-      if (!firstSection) {
-        firstSection = mdBody.slice(0, 400);
-      }
+      if (!firstSection) firstSection = mdBody.slice(0, 400);
 
       const previewHTML = converter.makeHtml(firstSection);
 
+      // ⬇️ THIS IS THE KEY PART YOU'RE ASKING ABOUT ⬇️
+      // Slugs added + Read More link updates URL — BUT no router yet!
       const div = document.createElement("div");
       div.className = "blog-card";
       div.innerHTML = `
@@ -222,39 +222,9 @@ async function renderBlogPost(filename) {
     <h2>${meta.title}</h2>
     <p>${meta.date}</p>
     <div>${html}</div>
-    <p><a href="#blog">← Back to Blog</a></p>
+    <p><a href="#" onclick="showPage('blog')">← Back to Blog</a></p>
   `;
 
   blogGallery.classList.add("hidden");
   blogPostContainer.classList.remove("hidden");
-}
-
-
-// ------------------------------
-// HASH ROUTER (ENABLE SHAREABLE LINKS)
-// ------------------------------
-window.addEventListener("hashchange", handleHashRouting);
-window.addEventListener("DOMContentLoaded", handleHashRouting);
-
-function handleHashRouting() {
-  const hash = window.location.hash;
-
-  // Example: #blog/first-quarter
-  if (hash.startsWith("#blog/")) {
-    const slug = hash.replace("#blog/", "");
-
-    loadBlogIndex().then(posts => {
-      const post = posts.find(p => p.slug === slug);
-      if (post) {
-        showPage("blog");
-        renderBlogPost(post.file);
-      }
-    });
-  }
-
-  // #blog → show list
-  if (hash === "#blog") {
-    showPage("blog");
-  }
-
 }
