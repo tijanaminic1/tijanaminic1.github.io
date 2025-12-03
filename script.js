@@ -179,8 +179,7 @@ async function renderBlogList(sort = "oldest") {
         <h3>${post.title}</h3>
         <p class="date">${post.date}</p>
         <div class="preview">${previewHTML}</div>
-        <a href="#blog/${post.slug}"data-file="${post.file}"class="open-post">Read More →</a>
-
+        <a href="#blog/${post.slug}" data-file="${post.file}" class="open-post">Read More →</a>
       `;
 
       blogGallery.appendChild(div);
@@ -230,32 +229,3 @@ async function renderBlogPost(filename) {
   blogPostContainer.classList.remove("hidden");
 }
 
-// This is the newly added part (that always breaks)
-
-window.addEventListener("hashchange", handleHashRouting);
-window.addEventListener("DOMContentLoaded", handleHashRouting);
-
-function handleHashRouting() {
-  const hash = window.location.hash;
-
-  // Case 1: Direct post link → #blog/<slug>
-  if (hash.startsWith("#blog/")) {
-    const slug = hash.replace("#blog/", "");
-
-    loadBlogIndex().then(posts => {
-      const post = posts.find(p => p.slug === slug);
-      if (post) {
-        showPage("blog");
-        renderBlogPost(post.file);
-      }
-    });
-
-    return;
-  }
-
-  // Case 2: Just #blog → Show the blog list
-  if (hash === "#blog") {
-    showPage("blog");
-    return;
-  }
-}
