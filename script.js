@@ -179,7 +179,7 @@ async function renderBlogList(sort = "oldest") {
         <h3>${post.title}</h3>
         <p class="date">${post.date}</p>
         <div class="preview">${previewHTML}</div>
-        <a href="blog/${post.slug}" data-file="${post.file}" class="open-post">Read More →</a>
+        <a href="#blog/${post.slug}" data-file="${post.file}" class="open-post">Read More →</a>
       `;
 
       blogGallery.appendChild(div);
@@ -222,7 +222,7 @@ async function renderBlogPost(filename) {
     <h2>${meta.title}</h2>
     <p>${meta.date}</p>
     <div>${html}</div>
-    <p><a href="blog">← Back to Blog</a></p>
+    <p><a href="#blog">← Back to Blog</a></p>
   `;
 
   blogGallery.classList.add("hidden");
@@ -240,8 +240,8 @@ function handleHashRouting() {
   const hash = window.location.hash;
 
   // Example: #blog/first-quarter
-  if (hash.startsWith("blog/")) {
-    const slug = hash.replace("blog/", "");
+  if (hash.startsWith("#blog/")) {
+    const slug = hash.replace("#blog/", "");
 
     loadBlogIndex().then(posts => {
       const post = posts.find(p => p.slug === slug);
@@ -253,8 +253,7 @@ function handleHashRouting() {
   }
 
   // #blog → show list
-  if (hash === "blog") {
+  if (hash === "#blog") {
     showPage("blog");
   }
 }
-
