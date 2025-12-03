@@ -265,8 +265,8 @@ function handleHashRouting() {
   const hash = window.location.hash;
 
   // Case: direct link to post #blog/slug
-  if (hash.startsWith("#blog/")) {
-    const slug = hash.replace("#blog/", "");
+  if (hash.startsWith("blog/")) {
+    const slug = hash.replace("blog/", "");
 
     loadBlogIndex().then(posts => {
       const post = posts.find(p => p.slug === slug);
@@ -279,7 +279,7 @@ function handleHashRouting() {
   }
 
   // Case: blog list
-  if (hash === "#blog") {
+  if (hash === "blog") {
     showPage("blog");
   }
 }
