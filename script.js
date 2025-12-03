@@ -179,7 +179,8 @@ async function renderBlogList(sort = "oldest") {
         <h3>${post.title}</h3>
         <p class="date">${post.date}</p>
         <div class="preview">${previewHTML}</div>
-        <a href="#blog/${post.slug}" data-file="${post.file}" class="open-post">Read More →</a>
+        <a href="#blog/${post.slug}"data-file="${post.file}"class="open-post">Read More →</a>
+
       `;
 
       blogGallery.appendChild(div);
