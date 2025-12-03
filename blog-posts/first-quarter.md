@@ -131,7 +131,7 @@ It’s hard to give advice retroactively. We forget. We rewrite our memories to 
 
 > PhD is geninely fun and fulfilling for me. I *enjoy* the process of discovering more about myself, and I embrace whatever comes. Life isn't about everything being easy and pretty, and the longterm reward of knowing myself better, pushing the boundaries of my own thinking, and being skillful at self-regulation, are all what makes the PhD *process* worth it for me, even if I don't walk out with a degree in my hands.
 
-This post focused in on the more difficult patterns because they’re can get very loud, and often the most universal. But those patterns exist to teach us something, only if we’re willing to face them with honesty and courage.
+This post focused in on the more difficult patterns because they can get very loud, and often the most universal. But those patterns exist to teach us something, only if we’re willing to face them with honesty and courage.
 I hope my words bring even a small amount of clarity or comfort to your own journey, whoever you are and whatever you’re doing.
 
 *Good luck!*
