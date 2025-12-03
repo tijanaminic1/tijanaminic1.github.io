@@ -258,28 +258,3 @@ function handleHashRouting() {
   }
 }
 
-window.addEventListener("hashchange", handleHashRouting);
-window.addEventListener("DOMContentLoaded", handleHashRouting);
-
-function handleHashRouting() {
-  const hash = window.location.hash;
-
-  // Case: direct link to post #blog/slug
-  if (hash.startsWith("blog/")) {
-    const slug = hash.replace("blog/", "");
-
-    loadBlogIndex().then(posts => {
-      const post = posts.find(p => p.slug === slug);
-      if (post) {
-        showPage("blog");
-        renderBlogPost(post.file);
-      }
-    });
-    return;
-  }
-
-  // Case: blog list
-  if (hash === "blog") {
-    showPage("blog");
-  }
-}
