@@ -256,4 +256,5 @@ function handleHashRouting() {
   if (hash === "#blog") {
     showPage("blog");
   }
+
 }
