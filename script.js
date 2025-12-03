@@ -228,3 +228,34 @@ async function renderBlogPost(filename) {
   blogGallery.classList.add("hidden");
   blogPostContainer.classList.remove("hidden");
 }
+
+
+// This is the newly added part (that always breaks)
+
+window.addEventListener("hashchange", handleHashRouting);
+window.addEventListener("DOMContentLoaded", handleHashRouting);
+
+function handleHashRouting() {
+  const hash = window.location.hash;
+
+  // Case 1: Direct post link → #blog/<slug>
+  if (hash.startsWith("#blog/")) {
+    const slug = hash.replace("#blog/", "");
+
+    loadBlogIndex().then(posts => {
+      const post = posts.find(p => p.slug === slug);
+      if (post) {
+        showPage("blog");
+        renderBlogPost(post.file);
+      }
+    });
+
+    return;
+  }
+
+  // Case 2: Just #blog → Show the blog list
+  if (hash === "#blog") {
+    showPage("blog");
+    return;
+  }
+}
