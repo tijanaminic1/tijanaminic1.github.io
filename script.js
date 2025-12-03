@@ -1,7 +1,3 @@
-/***********************
- * NAVIGATION & PAGE LOGIC
- ************************/
-
 function showPage(pageId) {
   const pages = document.querySelectorAll('.page');
 
@@ -11,71 +7,60 @@ function showPage(pageId) {
   // show selected page
   document.getElementById(pageId).classList.remove('hidden');
 
-  // Special case: blog list or post
+  // BLOG PAGE BEHAVIOR
   if (pageId === "blog") {
-    const hash = window.location.hash;
-
-    if (hash === "#blog" || hash === "" || hash === "#") {
-      // show list
-      blogGallery.classList.remove("hidden");
-      blogPostContainer.classList.add("hidden");
-      renderBlogList();
-    } else if (hash.startsWith("#blog/")) {
-      // show post
-      blogGallery.classList.add("hidden");
-      blogPostContainer.classList.remove("hidden");
-      // router will load correct post
-    }
+    if (blogGallery) blogGallery.classList.remove("hidden");
+    if (blogPostContainer) blogPostContainer.classList.add("hidden");
+    renderBlogList();
   }
 
-  // Food page
+  // FOOD PAGE BEHAVIOR
   if (pageId === "food") {
     setTimeout(initMap, 100);
   }
 }
 
 
-/******************************
- * SORTING LOGIC FOR PUBLICATIONS
- ******************************/
-document.getElementById("sort-options").addEventListener("change", function () {
-  const sortOption = this.value;
-  const gallery = document.getElementById("publication-gallery");
-  const publications = Array.from(gallery.querySelectorAll(".publication"));
+  document.getElementById("sort-options").addEventListener("change", function () {
+    const sortOption = this.value;
+    const gallery = document.getElementById("publication-gallery");
+    const publications = Array.from(gallery.querySelectorAll(".publication"));
+  
 
-  publications.sort((a, b) => {
-    const dateA = new Date(a.getAttribute("data-date"));
-    const dateB = new Date(b.getAttribute("data-date"));
-    return sortOption === "newest" ? dateB - dateA : dateA - dateB;
+    publications.sort((a, b) => {
+      const dateA = new Date(a.getAttribute("data-date"));
+      const dateB = new Date(b.getAttribute("data-date"));
+  
+      return sortOption === "newest" ? dateB - dateA : dateA - dateB;
+    });
+  
+
+    publications.forEach((pub) => gallery.appendChild(pub));
   });
+  
 
-  publications.forEach(pub => gallery.appendChild(pub));
-});
-
-
-/***********************
- * NAV ACTIVE STATE
- ************************/
 const navLinks = document.querySelectorAll('nav ul li');
+
+
 navLinks.forEach(link => {
-  link.addEventListener('click', function () {
+  link.addEventListener('click', function() {
+
     navLinks.forEach(link => link.classList.remove('active'));
+
+
     this.classList.add('active');
   });
 });
 
 
-/***********************
- * FOOD MAP
- ************************/
-let map;
-let mapInitialized = false;
+let map; // Declare map in outer scope
 let reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+let mapInitialized = false;
 
 function initMap() {
   if (mapInitialized) return;
 
-  map = L.map('map').setView([40.730610, -73.935242], 10);
+  map = L.map('map').setView([40.730610, -73.935242], 10); 
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: 'Map data © OpenStreetMap contributors'
@@ -90,19 +75,23 @@ function initMap() {
 }
 
 
-// Restaurant list
 function populateRestaurantList() {
   const listContainer = document.getElementById('restaurant-links');
   if (!listContainer) return;
 
+  // Clear any existing content
   listContainer.innerHTML = '';
 
+  // Group by country
   const grouped = {};
   restaurantPins.forEach(restaurant => {
-    if (!grouped[restaurant.city]) grouped[restaurant.city] = [];
+    if (!grouped[restaurant.city]) {
+      grouped[restaurant.city] = [];
+    }
     grouped[restaurant.city].push(restaurant);
   });
 
+  // For each country, create a group
   Object.keys(grouped).sort().forEach(city => {
     const cityHeading = document.createElement('h4');
     cityHeading.textContent = city;
@@ -124,31 +113,25 @@ function populateRestaurantList() {
   });
 }
 
+
+// Call this when the page loads
 document.addEventListener('DOMContentLoaded', populateRestaurantList);
 
 
-/***********************
- * BLOG CONSTANTS
- ************************/
 const blogGallery = document.getElementById("blog-gallery");
 const blogPostContainer = document.getElementById("blog-post");
+const blogSortSelect = document.getElementById("blog-sort-options");
 
 
-/***********************
- * LOAD BLOG INDEX
- ************************/
 async function loadBlogIndex() {
   const res = await fetch("blog-index.json");
   return await res.json();
 }
 
-
-/***********************
- * RENDER BLOG LIST
- ************************/
 async function renderBlogList(sort = "oldest") {
   let posts = await loadBlogIndex();
 
+  // Sort posts
   posts.sort((a, b) =>
     sort === "newest"
       ? new Date(b.date) - new Date(a.date)
@@ -162,86 +145,90 @@ async function renderBlogList(sort = "oldest") {
   for (const post of posts) {
     try {
       const res = await fetch(`blog-posts/${post.file}`);
-      if (!res.ok) continue;
+      if (!res.ok) {
+        console.error("Cannot load markdown:", post.file);
+        continue;
+      }
 
       const text = await res.text();
 
-      // strip frontmatter safely
-      const fm = text.match(/---([\s\S]*?)---/);
+      // Remove front matter
       let mdBody = text;
+      const fm = text.match(/---([\s\S]*?)---/);
+      if (fm?.[0]) {
+        mdBody = text.replace(fm[0], "").trimStart();
+      }
 
-      if (fm) mdBody = text.replace(fm[0], "").trimStart();
-
-      // strip leading title
+      // Remove leading H1 title
       if (mdBody.startsWith("# ")) {
         const i = mdBody.indexOf("\n");
         if (i !== -1) mdBody = mdBody.slice(i + 1).trimStart();
       }
 
-      // get first section
+      // Extract entire first section (until next ## heading)
       let end = mdBody.search(/\n## /);
       if (end === -1) end = mdBody.length;
       let firstSection = mdBody.slice(0, end).trim();
-      if (!firstSection) firstSection = mdBody.slice(0, 400);
 
+      if (!firstSection) {
+        firstSection = mdBody.slice(0, 400);
+      }
+
+      // Render preview HTML
       const previewHTML = converter.makeHtml(firstSection);
 
+      // Build blog card
       const div = document.createElement("div");
       div.className = "blog-card";
       div.innerHTML = `
         <h3>${post.title}</h3>
-        <p class="blog-date">${post.date}</p>
-        <div class="blog-preview">${previewHTML}</div>
-        <a class="open-post" href="#blog/${post.slug}" data-file="${post.file}">
-          Read More →
-        </a>
+        <p class="date">${post.date}</p>
+        <div class="preview">${previewHTML}</div>
+        <a href="#blog/${post.slug}" data-file="${post.file}" class="open-post">Read More →</a>
+
       `;
 
       blogGallery.appendChild(div);
 
     } catch (err) {
-      console.error("Blog preview error:", err);
+      console.error("Error rendering preview for", post.file, err);
     }
   }
+
+  // VERY IMPORTANT: Attach click events AFTER rendering
+  const links = document.querySelectorAll(".open-post");
+  links.forEach(link => {
+    link.onclick = async (e) => {
+      e.preventDefault();
+      const file = link.dataset.file;
+      await renderBlogPost(file);
+    };
+  });
 }
 
-
-/***********************
- * RENDER FULL BLOG POST
- ************************/
 async function renderBlogPost(filename) {
   const res = await fetch(`blog-posts/${filename}`);
   if (!res.ok) {
-    console.error("Could not load:", filename);
+    console.error("Unable to load post:", filename);
     return;
   }
 
   const text = await res.text();
 
-  // Extract frontmatter safely
-  const fmMatch = text.match(/---([\s\S]*?)---/);
-  let meta = { title: "", date: "" };
-  let mdBody = text;
-
-  if (fmMatch) {
-    const fmRaw = fmMatch[1].trim();
-    meta = Object.fromEntries(
-      fmRaw.split("\n").map(line => {
-        const i = line.indexOf(":");
-        return [line.slice(0, i).trim(), line.slice(i + 1).trim()];
-      })
-    );
-    mdBody = text.replace(fmMatch[0], "").trimStart();
-  }
+  const fm = text.match(/---([\s\S]*?)---/);
+  const mdContent = text.replace(fm[0], "");
+  const meta = Object.fromEntries(
+    fm[1].trim().split("\n").map(line => line.split(": ").map(s => s.trim()))
+  );
 
   const converter = new showdown.Converter();
-  const html = converter.makeHtml(mdBody);
+  const html = converter.makeHtml(mdContent);
 
   blogPostContainer.innerHTML = `
-    <a href="#blog" class="back-to-blog">← Back to Blog</a>
     <h2>${meta.title}</h2>
-    <p class="blog-date">${meta.date}</p>
-    ${html}
+    <p>${meta.date}</p>
+    <div>${html}</div>
+    <p><a href="#" onclick="showPage('blog')">← Back to Blog</a></p>
   `;
 
   blogGallery.classList.add("hidden");
@@ -249,20 +236,19 @@ async function renderBlogPost(filename) {
 }
 
 
-/***********************
- * HASH ROUTER
- ************************/
 window.addEventListener("hashchange", handleHashRouting);
 window.addEventListener("DOMContentLoaded", handleHashRouting);
 
 function handleHashRouting() {
   const hash = window.location.hash;
 
+  // Case 1: no hash → do nothing
   if (!hash || hash === "#") return;
 
-  // CASE 1 — open post
+  // Case 2: blog post link e.g. #blog/first-quarter
   if (hash.startsWith("#blog/")) {
     const slug = hash.replace("#blog/", "");
+
     loadBlogIndex().then(posts => {
       const post = posts.find(p => p.slug === slug);
       if (post) {
@@ -272,8 +258,12 @@ function handleHashRouting() {
     });
   }
 
-  // CASE 2 — blog home
+  // Case 3: blog page only → #blog
   else if (hash === "#blog") {
     showPage("blog");
   }
 }
+
+
+
+
