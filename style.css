@@ -96,36 +96,67 @@ body {
     margin-top: 20px;
   }
   
+#publication-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  margin-top: 20px;
+  max-width: 900px;
+}
+
+/* Each publication row */
+.publication {
+  padding: 15px 10px;
+  border-bottom: 1px solid #e5e5e5;
+  transition: background-color 0.2s ease;
+}
+
+.publication:hover {
+  background-color: rgba(231, 84, 128, 0.05);
+}
+
+/* Title */
+.publication p {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin: 0 0 4px;
+  line-height: 1.3;
+}
+
+/* Venue + date */
+.pub-meta {
+  font-size: 1rem;
+  color: #555;
+  margin: 0 0 10px;
+}
+
+/* Link badge */
+.pub-link {
+  font-size: 1rem;
+  color: #3971b1;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.pub-link:hover {
+  text-decoration: underline;
+}
+
+
+/* Make mobile-friendly */
+@media (max-width: 700px) {
   .publication {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    padding: 1rem;
-    text-align: center;
-    display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    align-items: center;
+    text-align: center;
   }
-  
-  .publication p {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 7px;
-  }
-  
+
   .publication img {
-    width: 100%;
-    height: auto;
-    max-width: 450px; 
-    max-height: 270px;
-    border-radius: 10px;
-    align-self: flex-end;
+    width: 70%;
+    max-width: 250px;
   }
-  
-  .publication img:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
-  }
+}
+
 
 
 @media (max-width: 768px) {
@@ -261,6 +292,166 @@ body {
 }
 
 
+/* ================================
+   BLOG LIST (Gallery)
+   ================================ */
+
+#blog-gallery .blog-card {
+  padding: 20px;
+  margin: 0px;
+  max-width: 750px;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+#blog-gallery .blog-card:hover {
+  background-color: rgba(231, 84, 128, 0.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+#blog-gallery .blog-card h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.7rem;
+  color: #000;
+}
+
+#blog-gallery .blog-card .date {
+  color: #93425a;
+  font-size: 1rem;
+  margin-bottom: 12px;
+}
+
+#blog-gallery .blog-card a {
+  color: #3971b1; /* your nav hover blue */
+  text-decoration: none;
+  font-size: 1.1rem;
+}
+
+#blog-gallery .blog-card a:hover {
+  text-decoration: underline;
+}
+
+.blog-card .preview {
+  font-size: 1.1rem;
+  color: #333;
+  margin: 10px 0 20px;
+  line-height: 1.5;
+}
+
+.blog-card .preview p {
+  margin: 0;
+}
+
+
+
+/* ================================
+   SINGLE BLOG POST VIEW
+   ================================ */
+
+#blog-post {
+  padding: 20px;
+  margin: 0px;
+  max-width: 750px;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 3px 8px rgba(78, 15, 45, 0.125);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  font-family: 'Times New Roman', Times, serif;
+}
+
+/* Headings */
+#blog-post h1,
+#blog-post h2,
+#blog-post h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.7rem;
+  color: #000000;
+}
+
+#blog-post h1 {
+  font-size: 2.2rem;
+}
+#blog-post h2 {
+  font-size: 1.9rem;
+  color: #000000; /* pink accent */
+}
+#blog-post h3 {
+  font-size: 1.5rem;
+}
+
+/* Paragraphs */
+#blog-post p {
+  margin: 1em 0;
+}
+
+/* Links */
+#blog-post a {
+  color: #3971b1;
+  text-decoration: none;
+  font-weight: bold;
+}
+#blog-post a:hover {
+  text-decoration: underline;
+}
+
+/* Images inside posts */
+#blog-post img {
+  max-width: 100%;
+  border-radius: 10px;
+  margin: 20px 0;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  display: block;
+}
+
+/* Lists */
+#blog-post ul,
+#blog-post ol {
+  margin: 15px 0 15px 35px;
+}
+
+#blog-post li {
+  margin-bottom: 10px;
+}
+
+/* Blockquotes */
+#blog-post blockquote {
+  margin: 20px 0;
+  padding: 15px 20px;
+  border-left: 5px solid #e75480;
+  background-color: rgba(231, 84, 128, 0.06);
+  border-radius: 6px;
+  font-style: italic;
+}
+
+/* Code Blocks */
+#blog-post pre {
+  background: #f3f3f3;
+  padding: 15px;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-size: 0.95rem;
+  margin: 20px 0;
+}
+
+#blog-post code {
+  background: #f5f5f5;
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-family: "Courier New", monospace;
+}
+
+/* Back to blog link */
+#blog-post .back-link {
+  margin-top: 30px;
+  display: inline-block;
+  color: #e75480;
+  font-size: 1.2rem;
+}
 
 
 
