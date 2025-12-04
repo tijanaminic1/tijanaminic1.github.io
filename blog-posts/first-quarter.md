@@ -1,5 +1,5 @@
 ---
-title: My First PhD Semester - What No One Likes To Talk About
+title: My First PhD Semester - The Good, the Bad, and the Ugly
 date: 2025-12-01
 ---
 
