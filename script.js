@@ -218,24 +218,36 @@ async function routeFromHash() {
   hash = hash.replace(/\/+$/, "");
 
 // --------------------------
-// Blog post route 
+// Bulletproof Blog Post Route
 // --------------------------
-let normalized = hash.replace(/^#blog\//, ""); 
-normalized = normalized.replace(/\/+$/, "");      // remove trailing slashes
-normalized = normalized.split("?")[0];            // remove query params
-normalized = decodeURIComponent(normalized);      // decode slugs
+if (hash.startsWith("#blog/")) {
 
-if (hash.startsWith("#blog/") && normalized) {
+  // Remove "#blog/"
+  let slug = hash.slice(6);
+
+  // Remove trailing slashes
+  slug = slug.replace(/\/+$/, "");
+
+  // Remove query params
+  slug = slug.split("?")[0];
+
+  // Normalize unicode dashes (Safari sometimes rewrites them)
+  slug = slug.replace(/–/g, "-").replace(/—/g, "-");
+
+  // Decode URL encoding (spaces, etc.)
+  slug = decodeURIComponent(slug);
+
   const posts = await loadBlogIndex();
-  const entry = posts.find(p => p.slug === normalized);
+  const entry = posts.find(p => p.slug === slug);
 
   if (entry) {
     showPage("blog");
     setActiveNav("#blog");
-    renderBlogPost(entry.file);
+    await renderBlogPost(entry.file);
     return;
   }
 }
+
 
 
   // --------------------------
