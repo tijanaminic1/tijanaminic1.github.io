@@ -121,43 +121,43 @@ function getRedirectPath() {
 
 // Central router
 async function router() {
-  let path = window.location.pathname;
+  // 1. Handle GitHub Pages SPA redirect fallback
+  let redirected = getRedirectPath();
+  let path = redirected || window.location.pathname;
   let hash = window.location.hash;
 
-  const redirected = getRedirectPath();
-  if (redirected) path = redirected;
+  // Normalize path (strip index.html)
+  if (path === "/index.html") path = "/";
 
-  // ---- Blog post: /blog/<slug> ----
+  // 2. Route blog post: /blog/<slug>
   let match = path.match(/^\/blog\/([^\/]+)\/?$/);
   if (match) {
     const slug = match[1];
     const posts = await loadBlogIndex();
     const found = posts.find(p => p.slug === slug);
-
     if (found) {
       showPage("blog");
-      renderBlogPost(found.file);
+      await renderBlogPost(found.file);
       return;
     }
   }
 
-  // ---- Blog list: /blog ----
+  // 3. Blog list: /blog
   if (path === "/blog" || path === "/blog/") {
     showPage("blog");
     renderBlogList();
     return;
   }
 
-  // ---- Hash fallback (Live Server) ----
+  // 4. Hash fallback: #/blog/<slug> (Live Server)
   match = hash.match(/^#\/blog\/([^\/]+)$/);
   if (match) {
     const slug = match[1];
     const posts = await loadBlogIndex();
     const found = posts.find(p => p.slug === slug);
-
     if (found) {
       showPage("blog");
-      renderBlogPost(found.file);
+      await renderBlogPost(found.file);
       return;
     }
   }
@@ -168,17 +168,15 @@ async function router() {
     return;
   }
 
-  // ---- Standard pages ----
-  if (path === "/about" || path === "/") {
+  // 5. Standard pages
+  if (path === "/" || path === "/about") {
     showPage("about");
     return;
   }
-
   if (path === "/publications") {
     showPage("publications");
     return;
   }
-
   if (path === "/food") {
     showPage("food");
     return;
@@ -187,6 +185,7 @@ async function router() {
   // Default → About
   showPage("about");
 }
+
 
 // Navigate programmatically
 function routerNavigate(path) {
