@@ -38,6 +38,69 @@ function setActiveNav(target) {
 }
 
 // =============================================================
+// RESTAURANTS PAGE (RECONSTRUCTED)
+// =============================================================
+
+// Global Leaflet map instance
+window.map = null;
+
+// Initialize map + markers
+function initMap() {
+  const mapContainer = document.getElementById("map");
+  if (!mapContainer) return;
+
+  // Avoid creating multiple maps
+  if (!window.map) {
+    window.map = L.map("map").setView([40.75, -73.98], 12);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19
+    }).addTo(window.map);
+  }
+
+  // Clear old markers when navigating back to food page
+  if (window.markerLayer) {
+    window.map.removeLayer(window.markerLayer);
+  }
+
+  window.markerLayer = L.layerGroup().addTo(window.map);
+
+  restaurantPins.forEach(r => {
+    const marker = L.marker([r.lat, r.lng]).addTo(window.markerLayer);
+    marker.bindPopup(`<b>${r.name}</b><br>${r.city}<br><a href="${r.blogUrl}" target="_blank">Read review →</a>`);
+  });
+
+  // Fix Leaflet rendering after being hidden
+  setTimeout(() => {
+    window.map.invalidateSize();
+  }, 200);
+}
+
+// Populate the restaurant list under the map
+function populateRestaurantList() {
+  const container = document.getElementById("restaurant-links");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  restaurantPins.forEach(r => {
+    const li = document.createElement("li");
+
+    li.innerHTML = `
+      <a href="${r.blogUrl}" target="_blank">${r.name} — <i>${r.city}</i></a>
+    `;
+
+    container.appendChild(li);
+  });
+}
+
+// Called by router when switching to #food
+function initRestaurantPage() {
+  initMap();
+  populateRestaurantList();
+}
+
+// =============================================================
 // PUBLICATIONS SORTING
 // =============================================================
 document.addEventListener("DOMContentLoaded", () => {
@@ -183,9 +246,21 @@ async function routeFromHash() {
   }
 
   // --------------------------
+  // For food
+  // --------------------------
+
+  if (hash === "#food") {
+    showPage("food");
+    setActiveNav("#food");
+    initRestaurantPage();   // <------ RESTORED RESTAURANT HANDLER
+    return;
+}
+
+
+  // --------------------------
   // Static pages
   // --------------------------
-  const pages = ["about", "publications", "food"];
+  const pages = ["about", "publications"];
 
   for (const p of pages) {
     if (hash === `#${p}`) {
