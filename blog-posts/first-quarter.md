@@ -1,18 +1,20 @@
 ---
-title: My First PhD Semester - The Good, the Bad, and the Ugly
+title: My First PhD Semester - What No One Talks About
 date: 2025-12-01
 ---
+
+# My First PhD Semester - What No One Talks About
 
 
 ## Why I'm writing this
 
 Most of the blog posts I ever see about CS PhDs are from people documenting the application process, or
 their advice on how to get a PhD, all of which are unique to the person and the institution they're attending.
-During my first semester (actually, University of Washington does quarters, but using the term *semester* is just more understandable) I found great comfort in writing - it became a stabilizing practice, a way to reflect clearly and track progress. I tried to write about everything, the externals and internals of what was happening around me, in attempt to document the advice that I might use or relay in those moments when the emotional turmoil is too high and it's easy to forget clever hacks to just...survive. 
+During my first semester (actually, University of Washington does quarters, but using the term *semester* is just more understandable) I found great comfort in writing — it became a stabilizing practice, a way to reflect clearly and track progress. I tried to write about everything, the externals and internals of what was happening around me, in attempt to document the advice that I might use or relay in those moments when the emotional turmoil is too high and it's easy to forget clever hacks to just...survive. 
 
 And I was right to do it. Over these three months, I’ve caught myself drifting into stress or irrational fears, and returning to my own words has helped me slow down, recalibrate, and strategize with more clarity. I want to share the observations and lessons I’ve gathered - some deeply personal, others more general — in the hope that they might help someone else feel seen, understood, and a little less alone. If even one person finds comfort, validation, or a practical strategy they can carry forward, then the writing will have done its job.
 
-## The PhD, So Far - What's Shifted?
+## The PhD, So Far — What's Shifted?
 
 ### Imposter syndrome on steroids
 
@@ -49,7 +51,7 @@ The point is this: I don’t think anyone is fully aware of the complexity of wh
 
 ### Guilt and shame
 
-This is something that really messes with me-- the feeling of everpresent guilt about not doing enough or making enough progress. It's really hard to define progress, especially in the first year of PhD. During one of our weekly meetings, I asked my advisors whether they felt we were making progress, because to me it seemed like we were just running in circles. They told me:
+This is something that really messes with me— the feeling of everpresent guilt about not doing enough or making enough progress. It's really hard to define progress, especially in the first year of PhD. During one of our weekly meetings, I asked my advisors whether they felt we were making progress, because to me it seemed like we were just running in circles. They told me:
 
 > “If the circle is the same every time, that’s no progress. But look closely at the circle. Is it a little rounder? A little more defined each time you move through it? That might be what progress looks like.”
 
@@ -77,7 +79,7 @@ Those resources include rest, too. I heard a great line recently:
 
 > “Choose your time to rest, because if you don’t, your body will choose it for you — and it will likely be at a very inconvenient time.”
 
-Rest isn’t indulgent, it’s preventative maintenance. Because if your priority is the work, then every other potential stressor - physical discomfort, exhaustion, poor sleep, hunger, isolation — needs to be softened, minimized, or removed.
+Rest isn’t indulgent, it’s preventative maintenance. Because if your priority is the work, then every other potential stressor — physical discomfort, exhaustion, poor sleep, hunger, isolation — needs to be softened, minimized, or removed.
 
 A few personal recommendations for treating yourself (that are worth every dime):
 - massages
@@ -88,7 +90,7 @@ A few personal recommendations for treating yourself (that are worth every dime)
 
 ### Stay active and eat well
 
-I cannot emphasize this enough. Since I am doing a CS PhD, I've had the pleasure of meeting two types of CS students-- absolute gym beasts (or extemely physically active in some way) and those who have never stepped foot into anything remotely resembling a gym. Please, try to be closer to the first group. 
+I cannot emphasize this enough. Since I am doing a CS PhD, I've had the pleasure of meeting two types of CS students— absolute gym beasts (or extemely physically active in some way) and those who have never stepped foot into anything remotely resembling a gym. Please, try to be closer to the first group. 
 
 I have nothing to gain from saying this, and it has nothing to do with physical appearance. But, from talking to people and experiencing it first-handedly, spending 10+ hours every day hunched over a computer screen on a crappy diet, it deteriorates a person so quietly, until one day you have a chronic back issue or nearly faint every time you stand up.
 
@@ -110,17 +112,17 @@ Once someone breaks the ice, others are relieved to admit they feel the same. My
 Talking to people also gives you something precious: perspective. Hearing “oh my god, me too” from the very people you compare yourself to is grounding. It humanizes everyone, including yourself.
 If no one is breaking the ice, be the one who does. It's terrifying, trust me, I know. But the comfort I found in knowing that people I idolized also struggle and seek that same comfort helped me not get paralyzed by the fear of failure and drop out within the first month.
 
-Finally, talking to the senior students in the program helped me think more about longevity - some of the people shared stories with me about *not* taking care of themselves properly and bearing physical consequences of it. Others have talked about how important it was for them to find a good therapist. I've gained a lot of insight into how to strategize my own endurance from talking to these people. Better learn from others' experience, even if it doesn't exactly match your own.
+Finally, talking to the senior students in the program helped me think more about longevity — some of the people shared stories with me about *not* taking care of themselves properly and bearing physical consequences of it. Others have talked about how important it was for them to find a good therapist. I've gained a lot of insight into how to strategize my own endurance from talking to these people. Better learn from others' experience, even if it doesn't exactly match your own.
 
 ### Bonus advice: Get off social media
 
 I'll keep this one brief. There's two reasons why I think it's essential to stay off social media as much as possible during a PhD (and longer, if you can afford to do it). 
 
-- The endless scrolling is completely useless and does your brain a huge disservice, especially when the whole point of your degree is to be capable of doing prolonged deep thinking on a day-to-day basis. Shortening your attention span won't do you any favors - you're losing time AND mind clarity.
+- The endless scrolling is completely useless and does your brain a huge disservice, especially when the whole point of your degree is to be capable of doing prolonged deep thinking on a day-to-day basis. Shortening your attention span won't do you any favors — you're losing time AND mind clarity.
 
-- Presently, social media is extremely weaponised to manipulate intellect and emotional state. Good and bad stuff happens in the world - you can read the news for that. What you *don't* want to see is 150 different reactions from different people to that same news story. You're being a direct victim of fear mongering, you're spiking your (already difficult to regulate) daily anxiety levels, and you're letting random people on the internet abuse your intellect (by feeding you what's mostly slop) and your emotional state (by keeping you in the constant state of anxiety, sometimes over opinion posts that are designed for engagement farming and rage bait). No need for FOMO - if you needed to know, it would've found its way to reach you.
+- Presently, social media is extremely weaponised to manipulate intellect and emotional state. Good and bad stuff happens in the world — you can read the news for that. What you *don't* want to see is 150 different reactions from different people to that same news story. You're being a direct victim of fear mongering, you're spiking your (already difficult to regulate) daily anxiety levels, and you're letting random people on the internet abuse your intellect (by feeding you what's mostly slop) and your emotional state (by keeping you in the constant state of anxiety, sometimes over opinion posts that are designed for engagement farming and rage bait). No need for FOMO — if you needed to know, it would've found its way to reach you.
 
-If you can't completely stay off, don't keep the apps on your phone - access what you need from your computer browser and limit it to a time that's NOT before bed. This tip helped me so much in my emotional regulation and in fostering direct connections with people around me. Once you realize that most of your reality is right in front of you, it's much easier to focus on doing hard things and not fall apart emotionally.
+If you can't completely stay off, don't keep the apps on your phone — access what you need from your computer browser and limit it to a time that's NOT before bed. This tip helped me so much in my emotional regulation and in fostering direct connections with people around me. Once you realize that most of your reality is right in front of you, it's much easier to focus on doing hard things and not fall apart emotionally.
 
 
 ## Moving forward
