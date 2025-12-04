@@ -1,25 +1,32 @@
 // =============================================================
-//  HASH-BASED ROUTER — STABLE, SIMPLE, WORKS EVERYWHERE
-//  Routes: #about, #publications, #blog, #blog/<slug>, #food
+//  HASH-BASED ROUTER — H A R D E N E D   &   F I X E D
+//  Supports: #about, #publications, #blog, #blog/<slug>, #food
 // =============================================================
 
-// Cache page elements
-const pages = document.querySelectorAll(".page");
-const blogGallery = document.getElementById("blog-gallery");
-const blogPostContainer = document.getElementById("blog-post");
-
-// ------------------------------
-// Generic page switching
-// ------------------------------
-function showPage(id) {
-  pages.forEach(p => p.classList.add("hidden"));
-  const page = document.getElementById(id);
-  if (page) page.classList.remove("hidden");
+// Cache page elements lazily (safer than running at load time)
+function getPages() {
+  return document.querySelectorAll(".page");
+}
+function getBlogGallery() {
+  return document.getElementById("blog-gallery");
+}
+function getBlogPostContainer() {
+  return document.getElementById("blog-post");
 }
 
-// ------------------------------
-// Set active nav link
-// ------------------------------
+// =============================================================
+// PAGE SWITCHING
+// =============================================================
+function showPage(id) {
+  getPages().forEach(p => p.classList.add("hidden"));
+  const page = document.getElementById(id);
+  if (page) page.classList.remove("hidden");
+
+  // Always scroll to top on page switch
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// Highlight nav link
 function setActiveNav(target) {
   document.querySelectorAll("nav a").forEach(a => {
     if (a.getAttribute("href") === target) {
@@ -37,8 +44,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const pubSort = document.getElementById("sort-options");
   if (pubSort) {
     pubSort.addEventListener("change", () => {
-      const sortBy = pubSort.value;
       const entries = [...document.querySelectorAll(".publication")];
+      const sortBy = pubSort.value;
 
       entries.sort((a, b) => {
         const da = new Date(a.dataset.date);
@@ -63,15 +70,25 @@ document.addEventListener("DOMContentLoaded", () => {
 // BLOG SYSTEM
 // =============================================================
 
-// Load blog index
+// Cache blog index (avoids race conditions)
+let BLOG_INDEX = null;
+
 async function loadBlogIndex() {
+  if (BLOG_INDEX) return BLOG_INDEX;
   const res = await fetch("blog_index.json");
-  return res.json();
+  BLOG_INDEX = await res.json();
+  return BLOG_INDEX;
 }
 
 // Render blog list
 async function renderBlogList() {
+  const blogGallery = getBlogGallery();
+  const blogPostContainer = getBlogPostContainer();
+
   if (!blogGallery) return;
+
+  blogPostContainer.classList.add("hidden");
+  blogGallery.classList.remove("hidden");
 
   blogGallery.innerHTML = "";
 
@@ -91,18 +108,18 @@ async function renderBlogList() {
     card.innerHTML = `
       <h3>${post.title}</h3>
       <p class="date">${post.date}</p>
-      <a href="#blog/${post.slug}">Read more →</a>
+      <a href="#blog/${encodeURIComponent(post.slug)}">Read more →</a>
     `;
 
     blogGallery.appendChild(card);
   });
-
-  blogGallery.classList.remove("hidden");
-  blogPostContainer.classList.add("hidden");
 }
 
 // Render a single blog post
 async function renderBlogPost(filename) {
+  const blogGallery = getBlogGallery();
+  const blogPostContainer = getBlogPostContainer();
+
   const res = await fetch(`blog-posts/${filename}`);
   let text = await res.text();
 
@@ -111,7 +128,7 @@ async function renderBlogPost(filename) {
 
   const converter = new showdown.Converter({
     tables: true,
-    simplifiedAutoLink: true
+    simplifiedAutoLink: true,
   });
 
   const html = converter.makeHtml(text);
@@ -124,25 +141,26 @@ async function renderBlogPost(filename) {
 
   blogGallery.classList.add("hidden");
   blogPostContainer.classList.remove("hidden");
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 // =============================================================
-// HASH ROUTER
+// HASH ROUTER (FIXED)
 // =============================================================
 async function routeFromHash() {
   let hash = window.location.hash || "#about";
 
-  // Normalize case
-  if (hash.endsWith("/") && hash !== "/") {
-    hash = hash.slice(0, -1);
-  }
+  // Remove trailing slash
+  hash = hash.replace(/\/+$/, "");
 
   // --------------------------
-  // Blog post
+  // Blog post route
+  // supports #blog/my-post, #blog/my%20post, #blog/My-Post  
   // --------------------------
-  const match = hash.match(/^#blog\/([^\/]+)$/);
-  if (match) {
-    const slug = match[1];
+  const blogMatch = hash.match(/^#blog\/(.+)$/);
+  if (blogMatch) {
+    const slug = decodeURIComponent(blogMatch[1]);
     const posts = await loadBlogIndex();
     const entry = posts.find(p => p.slug === slug);
 
@@ -165,31 +183,30 @@ async function routeFromHash() {
   }
 
   // --------------------------
-  // Standard pages
+  // Static pages
   // --------------------------
-  if (hash === "#about") {
-    showPage("about");
-    setActiveNav("#about");
-    return;
+  const pages = ["about", "publications", "food"];
+
+  for (const p of pages) {
+    if (hash === `#${p}`) {
+      showPage(p);
+      setActiveNav(`#${p}`);
+      return;
+    }
   }
 
-  if (hash === "#publications") {
-    showPage("publications");
-    setActiveNav("#publications");
-    return;
-  }
-
-  if (hash === "#food") {
-    showPage("food");
-    setActiveNav("#food");
-    return;
-  }
-
-  // Default fallback
+  // Fallback
   showPage("about");
   setActiveNav("#about");
 }
 
-// Listen for URL changes
+// =============================================================
+// SAFER LOAD EVENTS
+// (DOMContentLoaded → router AFTER JSON loads)
+// =============================================================
+window.addEventListener("DOMContentLoaded", async () => {
+  await loadBlogIndex();  // preload to avoid race conditions
+  routeFromHash();
+});
+
 window.addEventListener("hashchange", routeFromHash);
-window.addEventListener("DOMContentLoaded", routeFromHash);
