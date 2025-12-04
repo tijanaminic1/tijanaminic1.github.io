@@ -217,23 +217,26 @@ async function routeFromHash() {
   // Remove trailing slash
   hash = hash.replace(/\/+$/, "");
 
-  // --------------------------
-  // Blog post route
-  // supports #blog/my-post, #blog/my%20post, #blog/My-Post  
-  // --------------------------
-  const blogMatch = hash.match(/^#blog\/(.+)$/);
-  if (blogMatch) {
-    const slug = decodeURIComponent(blogMatch[1]);
-    const posts = await loadBlogIndex();
-    const entry = posts.find(p => p.slug === slug);
+// --------------------------
+// Blog post route 
+// --------------------------
+let normalized = hash.replace(/^#blog\//, ""); 
+normalized = normalized.replace(/\/+$/, "");      // remove trailing slashes
+normalized = normalized.split("?")[0];            // remove query params
+normalized = decodeURIComponent(normalized);      // decode slugs
 
-    if (entry) {
-      showPage("blog");
-      setActiveNav("#blog");
-      renderBlogPost(entry.file);
-      return;
-    }
+if (hash.startsWith("#blog/") && normalized) {
+  const posts = await loadBlogIndex();
+  const entry = posts.find(p => p.slug === normalized);
+
+  if (entry) {
+    showPage("blog");
+    setActiveNav("#blog");
+    renderBlogPost(entry.file);
+    return;
   }
+}
+
 
   // --------------------------
   // Blog list
