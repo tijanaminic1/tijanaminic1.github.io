@@ -1,38 +1,6 @@
 // =============================================================
-//  FULL SITE ROUTER + BLOG + PAGE SWITCHING
-//  Pretty URLs (GitHub Pages) + Hash fallback (Live Server)
-// =============================================================
-
-// ----------------------------------------
-// PAGE SWITCHING (Used Internally)
-// ----------------------------------------
-function showPage(id) {
-  pages.forEach(p => p.classList.add("hidden"));
-  const page = document.getElementById(id);
-  if (page) page.classList.remove("hidden");
-}
-
-// ----------------------------------------
-// PUBLICATIONS SORTING
-// ----------------------------------------
-document.getElementById("sort-options")?.addEventListener("change", e => {
-  const sort = e.target.value;
-  const pubs = [...document.querySelectorAll(".publication")];
-
-  pubs.sort((a, b) => {
-    const da = new Date(a.dataset.date);
-    const db = new Date(b.dataset.date);
-    return sort === "newest" ? db - da : da - db;
-  });
-
-  const gallery = document.getElementById("publication-gallery");
-  pubs.forEach(p => gallery.appendChild(p));
-});
-
-// =============================================================
-// SIMPLE HASH-BASED ROUTER + BLOG
-// Works on Live Server and GitHub Pages
-// URLs like: #about, #blog, #blog/first-quarter
+//  HASH-BASED ROUTER — STABLE, SIMPLE, WORKS EVERYWHERE
+//  Routes: #about, #publications, #blog, #blog/<slug>, #food
 // =============================================================
 
 // Cache page elements
@@ -50,23 +18,36 @@ function showPage(id) {
 }
 
 // ------------------------------
-// Publications sorting
+// Set active nav link
 // ------------------------------
+function setActiveNav(target) {
+  document.querySelectorAll("nav a").forEach(a => {
+    if (a.getAttribute("href") === target) {
+      a.classList.add("active");
+    } else {
+      a.classList.remove("active");
+    }
+  });
+}
+
+// =============================================================
+// PUBLICATIONS SORTING
+// =============================================================
 document.addEventListener("DOMContentLoaded", () => {
   const pubSort = document.getElementById("sort-options");
   if (pubSort) {
     pubSort.addEventListener("change", () => {
       const sortBy = pubSort.value;
-      const pubs = [...document.querySelectorAll(".publication")];
+      const entries = [...document.querySelectorAll(".publication")];
 
-      pubs.sort((a, b) => {
+      entries.sort((a, b) => {
         const da = new Date(a.dataset.date);
         const db = new Date(b.dataset.date);
         return sortBy === "newest" ? db - da : da - db;
       });
 
       const gallery = document.getElementById("publication-gallery");
-      pubs.forEach(p => gallery.appendChild(p));
+      entries.forEach(p => gallery.appendChild(p));
     });
   }
 
@@ -78,22 +59,24 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// ------------------------------
-// Blog helpers
-// ------------------------------
+// =============================================================
+// BLOG SYSTEM
+// =============================================================
+
+// Load blog index
 async function loadBlogIndex() {
   const res = await fetch("blog_index.json");
   return res.json();
 }
 
+// Render blog list
 async function renderBlogList() {
   if (!blogGallery) return;
 
   blogGallery.innerHTML = "";
 
   const posts = await loadBlogIndex();
-  const sortSelect = document.getElementById("blog-sort-options");
-  const sortOrder = sortSelect ? sortSelect.value : "oldest";
+  const sortOrder = document.getElementById("blog-sort-options")?.value || "oldest";
 
   posts.sort((a, b) =>
     sortOrder === "newest"
@@ -118,20 +101,17 @@ async function renderBlogList() {
   blogPostContainer.classList.add("hidden");
 }
 
+// Render a single blog post
 async function renderBlogPost(filename) {
-  if (!blogPostContainer) return;
-
-  // Fetch markdown
   const res = await fetch(`blog-posts/${filename}`);
   let text = await res.text();
 
-  // Strip YAML front matter
+  // Remove YAML front matter
   text = text.replace(/^---[\s\S]*?---/, "").trim();
 
   const converter = new showdown.Converter({
     tables: true,
-    simplifiedAutoLink: true,
-    ghCompatibleHeaderId: true
+    simplifiedAutoLink: true
   });
 
   const html = converter.makeHtml(text);
@@ -146,50 +126,47 @@ async function renderBlogPost(filename) {
   blogPostContainer.classList.remove("hidden");
 }
 
-// ------------------------------
-// Hash-based router
-// ------------------------------
-function setActiveNav(targetHash) {
-  document.querySelectorAll("nav a").forEach(a => {
-    if (a.getAttribute("href") === targetHash) {
-      a.classList.add("active");
-    } else {
-      a.classList.remove("active");
-    }
-  });
-}
-
+// =============================================================
+// HASH ROUTER
+// =============================================================
 async function routeFromHash() {
   let hash = window.location.hash || "#about";
 
-  // Normalize (remove trailing slash)
-  if (hash.endsWith("/") && hash.length > 1) {
+  // Normalize case
+  if (hash.endsWith("/") && hash !== "/") {
     hash = hash.slice(0, -1);
   }
 
-  // Blog post: #blog/<slug>
-  const blogMatch = hash.match(/^#blog\/([^\/]+)$/);
-  if (blogMatch) {
-    const slug = blogMatch[1];
+  // --------------------------
+  // Blog post
+  // --------------------------
+  const match = hash.match(/^#blog\/([^\/]+)$/);
+  if (match) {
+    const slug = match[1];
     const posts = await loadBlogIndex();
-    const post = posts.find(p => p.slug === slug);
-    if (post) {
+    const entry = posts.find(p => p.slug === slug);
+
+    if (entry) {
       showPage("blog");
       setActiveNav("#blog");
-      await renderBlogPost(post.file);
+      renderBlogPost(entry.file);
       return;
     }
   }
 
-  // Blog list: #blog
+  // --------------------------
+  // Blog list
+  // --------------------------
   if (hash === "#blog") {
     showPage("blog");
     setActiveNav("#blog");
-    await renderBlogList();
+    renderBlogList();
     return;
   }
 
+  // --------------------------
   // Standard pages
+  // --------------------------
   if (hash === "#about") {
     showPage("about");
     setActiveNav("#about");
@@ -208,14 +185,11 @@ async function routeFromHash() {
     return;
   }
 
-  // Default → About
+  // Default fallback
   showPage("about");
   setActiveNav("#about");
 }
 
-// ------------------------------
-// Event listeners
-// ------------------------------
+// Listen for URL changes
 window.addEventListener("hashchange", routeFromHash);
 window.addEventListener("DOMContentLoaded", routeFromHash);
-
