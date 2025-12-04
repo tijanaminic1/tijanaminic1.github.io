@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tijana Minić</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
@@ -14,18 +14,15 @@
 <body>
   <header>
     <img src="images/tiksi3.png" alt="Header Logo" class="header-image" />    
-    <nav>
-      <ul>
-<a href="/about" onclick="routerNavigate('/about'); return false;">About Me</a>
-<a href="/publications" onclick="routerNavigate('/publications'); return false;">Publications</a>
-<a href="/blog" onclick="routerNavigate('/blog'); return false;">Thoughts</a>
-<a href="/food" onclick="routerNavigate('/food'); return false;">Food recs</a>
+<nav>
+  <ul>
+    <li><a href="#about">About Me</a></li>
+    <li><a href="#publications">Publications</a></li>
+    <li><a href="#blog">Thoughts</a></li>
+    <li><a href="#food">Food recs</a></li>
+  </ul>
+</nav>
 
-
-
-
-      </ul>
-    </nav>
   </header>
 
   <main>
@@ -210,6 +207,7 @@
 
 
 
+
     <section id="food" class="page hidden">
         <h2>Restaurant recommendations</h2>
 
@@ -230,7 +228,8 @@
     <p>&copy; 2025 Tijana Minić. All Rights Reserved.</p>
   </footer>
 
-  <script src="restaurants.js"></script>
-  <script src="script.js"></script>
+<script src="restaurants.js"></script>
+<script src="script.js"></script>
+
 </body>
 </html>

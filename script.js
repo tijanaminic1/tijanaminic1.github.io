@@ -4,13 +4,6 @@
 // =============================================================
 
 // ----------------------------------------
-// Elements
-// ----------------------------------------
-const pages = document.querySelectorAll(".page");
-const blogGallery = document.getElementById("blog-gallery");
-const blogPostContainer = document.getElementById("blog-post");
-
-// ----------------------------------------
 // PAGE SWITCHING (Used Internally)
 // ----------------------------------------
 function showPage(id) {
@@ -36,24 +29,77 @@ document.getElementById("sort-options")?.addEventListener("change", e => {
   pubs.forEach(p => gallery.appendChild(p));
 });
 
-// ----------------------------------------
-// BLOG SYSTEM
-// ----------------------------------------
+// =============================================================
+// SIMPLE HASH-BASED ROUTER + BLOG
+// Works on Live Server and GitHub Pages
+// URLs like: #about, #blog, #blog/first-quarter
+// =============================================================
 
-// Load blog index
+// Cache page elements
+const pages = document.querySelectorAll(".page");
+const blogGallery = document.getElementById("blog-gallery");
+const blogPostContainer = document.getElementById("blog-post");
+
+// ------------------------------
+// Generic page switching
+// ------------------------------
+function showPage(id) {
+  pages.forEach(p => p.classList.add("hidden"));
+  const page = document.getElementById(id);
+  if (page) page.classList.remove("hidden");
+}
+
+// ------------------------------
+// Publications sorting
+// ------------------------------
+document.addEventListener("DOMContentLoaded", () => {
+  const pubSort = document.getElementById("sort-options");
+  if (pubSort) {
+    pubSort.addEventListener("change", () => {
+      const sortBy = pubSort.value;
+      const pubs = [...document.querySelectorAll(".publication")];
+
+      pubs.sort((a, b) => {
+        const da = new Date(a.dataset.date);
+        const db = new Date(b.dataset.date);
+        return sortBy === "newest" ? db - da : da - db;
+      });
+
+      const gallery = document.getElementById("publication-gallery");
+      pubs.forEach(p => gallery.appendChild(p));
+    });
+  }
+
+  const blogSort = document.getElementById("blog-sort-options");
+  if (blogSort) {
+    blogSort.addEventListener("change", () => {
+      renderBlogList();
+    });
+  }
+});
+
+// ------------------------------
+// Blog helpers
+// ------------------------------
 async function loadBlogIndex() {
-  const res = await fetch("/blog_index.json");
+  const res = await fetch("blog_index.json");
   return res.json();
 }
 
-// Render the list of blog posts
 async function renderBlogList() {
+  if (!blogGallery) return;
+
   blogGallery.innerHTML = "";
-  blogGallery.classList.remove("hidden");
-  blogPostContainer.classList.add("hidden");
 
   const posts = await loadBlogIndex();
-  posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+  const sortSelect = document.getElementById("blog-sort-options");
+  const sortOrder = sortSelect ? sortSelect.value : "oldest";
+
+  posts.sort((a, b) =>
+    sortOrder === "newest"
+      ? new Date(b.date) - new Date(a.date)
+      : new Date(a.date) - new Date(b.date)
+  );
 
   posts.forEach(post => {
     const card = document.createElement("div");
@@ -62,29 +108,24 @@ async function renderBlogList() {
     card.innerHTML = `
       <h3>${post.title}</h3>
       <p class="date">${post.date}</p>
-
-      <a href="/blog/${post.slug}"
-         onclick="routerNavigate('/blog/${post.slug}'); return false;">
-         Read more →
-      </a>
+      <a href="#blog/${post.slug}">Read more →</a>
     `;
 
     blogGallery.appendChild(card);
   });
+
+  blogGallery.classList.remove("hidden");
+  blogPostContainer.classList.add("hidden");
 }
 
-// Render Markdown blog post
 async function renderBlogPost(filename) {
-  const res = await fetch(`/blog-posts/${filename}`);
+  if (!blogPostContainer) return;
+
+  // Fetch markdown
+  const res = await fetch(`blog-posts/${filename}`);
   let text = await res.text();
 
-  // -----------------------------
-  // REMOVE YAML FRONT-MATTER
-  // -----------------------------
-  // Matches:
-  // ---
-  // key: value
-  // ---
+  // Strip YAML front matter
   text = text.replace(/^---[\s\S]*?---/, "").trim();
 
   const converter = new showdown.Converter({
@@ -98,103 +139,83 @@ async function renderBlogPost(filename) {
   blogPostContainer.innerHTML = `
     ${html}
     <br><br>
-    <a href="/blog" onclick="routerNavigate('/blog'); return false;" class="back-link">
-      ← Back to Thoughts
-    </a>
+    <a href="#blog" class="back-link">← Back to Thoughts</a>
   `;
 
   blogGallery.classList.add("hidden");
   blogPostContainer.classList.remove("hidden");
 }
 
-
-// ----------------------------------------
-// ROUTER
-// ----------------------------------------
-
-// GitHub Pages 404 fallback
-function getRedirectPath() {
-  const val = sessionStorage.getItem("redirectPath");
-  sessionStorage.removeItem("redirectPath");
-  return val;
+// ------------------------------
+// Hash-based router
+// ------------------------------
+function setActiveNav(targetHash) {
+  document.querySelectorAll("nav a").forEach(a => {
+    if (a.getAttribute("href") === targetHash) {
+      a.classList.add("active");
+    } else {
+      a.classList.remove("active");
+    }
+  });
 }
 
-// Central router
-async function router() {
-  // 1. Handle GitHub Pages SPA redirect fallback
-  let redirected = getRedirectPath();
-  let path = redirected || window.location.pathname;
-  let hash = window.location.hash;
+async function routeFromHash() {
+  let hash = window.location.hash || "#about";
 
-  // Normalize path (strip index.html)
-  if (path === "/index.html") path = "/";
+  // Normalize (remove trailing slash)
+  if (hash.endsWith("/") && hash.length > 1) {
+    hash = hash.slice(0, -1);
+  }
 
-  // 2. Route blog post: /blog/<slug>
-  let match = path.match(/^\/blog\/([^\/]+)\/?$/);
-  if (match) {
-    const slug = match[1];
+  // Blog post: #blog/<slug>
+  const blogMatch = hash.match(/^#blog\/([^\/]+)$/);
+  if (blogMatch) {
+    const slug = blogMatch[1];
     const posts = await loadBlogIndex();
-    const found = posts.find(p => p.slug === slug);
-    if (found) {
+    const post = posts.find(p => p.slug === slug);
+    if (post) {
       showPage("blog");
-      await renderBlogPost(found.file);
+      setActiveNav("#blog");
+      await renderBlogPost(post.file);
       return;
     }
   }
 
-  // 3. Blog list: /blog
-  if (path === "/blog" || path === "/blog/") {
+  // Blog list: #blog
+  if (hash === "#blog") {
     showPage("blog");
-    renderBlogList();
+    setActiveNav("#blog");
+    await renderBlogList();
     return;
   }
 
-  // 4. Hash fallback: #/blog/<slug> (Live Server)
-  match = hash.match(/^#\/blog\/([^\/]+)$/);
-  if (match) {
-    const slug = match[1];
-    const posts = await loadBlogIndex();
-    const found = posts.find(p => p.slug === slug);
-    if (found) {
-      showPage("blog");
-      await renderBlogPost(found.file);
-      return;
-    }
-  }
-
-  if (hash === "#/blog") {
-    showPage("blog");
-    renderBlogList();
-    return;
-  }
-
-  // 5. Standard pages
-  if (path === "/" || path === "/about") {
+  // Standard pages
+  if (hash === "#about") {
     showPage("about");
+    setActiveNav("#about");
     return;
   }
-  if (path === "/publications") {
+
+  if (hash === "#publications") {
     showPage("publications");
+    setActiveNav("#publications");
     return;
   }
-  if (path === "/food") {
+
+  if (hash === "#food") {
     showPage("food");
+    setActiveNav("#food");
     return;
   }
 
   // Default → About
   showPage("about");
+  setActiveNav("#about");
 }
 
+// ------------------------------
+// Event listeners
+// ------------------------------
+window.addEventListener("hashchange", routeFromHash);
+window.addEventListener("DOMContentLoaded", routeFromHash);
 
-// Navigate programmatically
-function routerNavigate(path) {
-  history.pushState({}, "", path);
-  router();
-}
-
-// Browser navigation
-window.addEventListener("popstate", router);
-
-// Load on page load
-window.addEventListener("DOMContentLoaded", router);
