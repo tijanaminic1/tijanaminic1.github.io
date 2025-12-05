@@ -1,317 +1,157 @@
-// =============================================================
-//  HASH-BASED ROUTER — H A R D E N E D   &   F I X E D
-//  Supports: #about, #publications, #blog, #blog/<slug>, #food
-// =============================================================
+function showPage(pageId) {
+  const pages = document.querySelectorAll('.page');
 
-// Cache page elements lazily (safer than running at load time)
-function getPages() {
-  return document.querySelectorAll(".page");
-}
-function getBlogGallery() {
-  return document.getElementById("blog-gallery");
-}
-function getBlogPostContainer() {
-  return document.getElementById("blog-post");
-}
+  // hide all pages
+  pages.forEach(page => page.classList.add('hidden'));
 
-// =============================================================
-// PAGE SWITCHING
-// =============================================================
-function showPage(id) {
-  getPages().forEach(p => p.classList.add("hidden"));
-  const page = document.getElementById(id);
-  if (page) page.classList.remove("hidden");
+  // show selected page
+  document.getElementById(pageId).classList.remove('hidden');
 
-  // Always scroll to top on page switch
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-// Highlight nav link
-function setActiveNav(target) {
-  document.querySelectorAll("nav a").forEach(a => {
-    if (a.getAttribute("href") === target) {
-      a.classList.add("active");
-    } else {
-      a.classList.remove("active");
-    }
-  });
-}
-
-// =============================================================
-// RESTAURANTS PAGE (RECONSTRUCTED)
-// =============================================================
-
-// Global Leaflet map instance
-window.map = null;
-
-// Initialize map + markers
-function initMap() {
-  const mapContainer = document.getElementById("map");
-  if (!mapContainer) return;
-
-  // Avoid creating multiple maps
-  if (!window.map) {
-    window.map = L.map("map").setView([40.75, -73.98], 12);
-
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 19
-    }).addTo(window.map);
+  // BLOG PAGE BEHAVIOR
+  if (pageId === "blog") {
+    if (blogGallery) blogGallery.classList.remove("hidden");
+    if (blogPostContainer) blogPostContainer.classList.add("hidden");
+    renderBlogList();
   }
 
-  // Clear old markers when navigating back to food page
-  if (window.markerLayer) {
-    window.map.removeLayer(window.markerLayer);
+  // FOOD PAGE BEHAVIOR
+  if (pageId === "food") {
+    setTimeout(initMap, 100);
   }
-
-  window.markerLayer = L.layerGroup().addTo(window.map);
-
-  restaurantPins.forEach(r => {
-    const marker = L.marker([r.lat, r.lng]).addTo(window.markerLayer);
-    marker.bindPopup(`<b>${r.name}</b><br>${r.city}<br><a href="${r.blogUrl}" target="_blank">Read review →</a>`);
-  });
-
-  // Fix Leaflet rendering after being hidden
-  setTimeout(() => {
-    window.map.invalidateSize();
-  }, 200);
 }
 
-// Populate the restaurant list under the map
-function populateRestaurantList() {
-  const container = document.getElementById("restaurant-links");
-  if (!container) return;
+  document.getElementById("sort-options").addEventListener("change", function () {
+    const sortOption = this.value;
+    const gallery = document.getElementById("publication-gallery");
+ 
+ 
+ });
 
-  container.innerHTML = "";
-
-  restaurantPins.forEach(r => {
-    const li = document.createElement("li");
-
-    li.innerHTML = `
-      <a href="${r.blogUrl}" target="_blank">${r.name} — <i>${r.city}</i></a>
-    `;
-
-    container.appendChild(li);
-  });
-}
-
-// Called by router when switching to #food
-function initRestaurantPage() {
-  initMap();
-  populateRestaurantList();
-}
-
-// =============================================================
-// PUBLICATIONS SORTING
-// =============================================================
-document.addEventListener("DOMContentLoaded", () => {
-  const pubSort = document.getElementById("sort-options");
-  if (pubSort) {
-    pubSort.addEventListener("change", () => {
-      const entries = [...document.querySelectorAll(".publication")];
-      const sortBy = pubSort.value;
-
-      entries.sort((a, b) => {
-        const da = new Date(a.dataset.date);
-        const db = new Date(b.dataset.date);
-        return sortBy === "newest" ? db - da : da - db;
-      });
-
-      const gallery = document.getElementById("publication-gallery");
-      entries.forEach(p => gallery.appendChild(p));
-    });
-  }
-
-  const blogSort = document.getElementById("blog-sort-options");
-  if (blogSort) {
-    blogSort.addEventListener("change", () => {
-      renderBlogList();
-    });
-  }
-});
-
-// =============================================================
-// BLOG SYSTEM
-// =============================================================
+let map; // Declare map in outer scope
+let reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
 
 
+// Call this when the page loads
+document.addEventListener('DOMContentLoaded', populateRestaurantList);
 
 
-// Cache blog index (avoids race conditions)
-let BLOG_INDEX = null;
+const blogGallery = document.getElementById("blog-gallery");
+const blogPostContainer = document.getElementById("blog-post");
+const blogSortSelect = document.getElementById("blog-sort-options");
+
 
 async function loadBlogIndex() {
-  if (BLOG_INDEX) return BLOG_INDEX;
-  const res = await fetch("blog_index.json");
-  BLOG_INDEX = await res.json();
-  return BLOG_INDEX;
+  const res = await fetch("blog-index.json");
+  return await res.json();
 }
 
-// Render blog list
-async function renderBlogList() {
-  const blogGallery = getBlogGallery();
-  const blogPostContainer = getBlogPostContainer();
+async function renderBlogList(sort = "oldest") {
+  let posts = await loadBlogIndex();
 
-  if (!blogGallery) return;
-
-  blogPostContainer.classList.add("hidden");
-  blogGallery.classList.remove("hidden");
-
-  blogGallery.innerHTML = "";
-
-  const posts = await loadBlogIndex();
-  const sortOrder = document.getElementById("blog-sort-options")?.value || "oldest";
-
+  // Sort posts
   posts.sort((a, b) =>
-    sortOrder === "newest"
+    sort === "newest"
       ? new Date(b.date) - new Date(a.date)
       : new Date(a.date) - new Date(b.date)
   );
 
-  posts.forEach(post => {
-    const card = document.createElement("div");
-    card.classList.add("blog-card");
+  blogGallery.innerHTML = "";
 
-    card.innerHTML = `
-      <h3>${post.title}</h3>
-      <p class="date">${post.date}</p>
-      <a href="#" data-slug="${post.slug}" class="read-more">Read more →</a>
-    `;
+  const converter = new showdown.Converter();
 
-    blogGallery.appendChild(card);
-});
+  for (const post of posts) {
+    try {
+      const res = await fetch(`blog-posts/${post.file}`);
+      if (!res.ok) {
+        console.error("Cannot load markdown:", post.file);
+        continue;
+      }
+
+      const text = await res.text();
+
+      // Remove front matter
+      let mdBody = text;
+      const fm = text.match(/---([\s\S]*?)---/);
+      if (fm?.[0]) {
+        mdBody = text.replace(fm[0], "").trimStart();
+      }
+
+      // Remove leading H1 title
+      if (mdBody.startsWith("# ")) {
+        const i = mdBody.indexOf("\n");
+        if (i !== -1) mdBody = mdBody.slice(i + 1).trimStart();
+      }
+
+      // Extract entire first section (until next ## heading)
+      let end = mdBody.search(/\n## /);
+      if (end === -1) end = mdBody.length;
+      let firstSection = mdBody.slice(0, end).trim();
+
+      if (!firstSection) {
+        firstSection = mdBody.slice(0, 400);
+      }
+
+      // Render preview HTML
+      const previewHTML = converter.makeHtml(firstSection);
+
+      // Build blog card
+      const div = document.createElement("div");
+      div.className = "blog-card";
+      div.innerHTML = `
+        <h3>${post.title}</h3>
+        <p class="date">${post.date}</p>
+        <div class="preview">${previewHTML}</div>
+        <a href="#" data-file="${post.file}" class="open-post">Read More →</a>
+      `;
+
+      blogGallery.appendChild(div);
+
+    } catch (err) {
+      console.error("Error rendering preview for", post.file, err);
+    }
+  }
+
+  // VERY IMPORTANT: Attach click events AFTER rendering
+  const links = document.querySelectorAll(".open-post");
+  links.forEach(link => {
+    link.onclick = async (e) => {
+      e.preventDefault();
+      const file = link.dataset.file;
+      await renderBlogPost(file);
+    };
+  });
 }
 
-// Render a single blog post
 async function renderBlogPost(filename) {
-  const blogGallery = getBlogGallery();
-  const blogPostContainer = getBlogPostContainer();
-
   const res = await fetch(`blog-posts/${filename}`);
-  let text = await res.text();
+  if (!res.ok) {
+    console.error("Unable to load post:", filename);
+    return;
+  }
 
-  // Remove YAML front matter
-  text = text.replace(/^---[\s\S]*?---/, "").trim();
+  const text = await res.text();
 
-  const converter = new showdown.Converter({
-    tables: true,
-    simplifiedAutoLink: true,
-  });
+  const fm = text.match(/---([\s\S]*?)---/);
+  const mdContent = text.replace(fm[0], "");
+  const meta = Object.fromEntries(
+    fm[1].trim().split("\n").map(line => line.split(": ").map(s => s.trim()))
+  );
 
-  const html = converter.makeHtml(text);
+  const converter = new showdown.Converter();
+  const html = converter.makeHtml(mdContent);
 
   blogPostContainer.innerHTML = `
-    ${html}
-    <br><br>
-    <a href="#blog" class="back-link">← Back to Thoughts</a>
+    <h2>${meta.title}</h2>
+    <p>${meta.date}</p>
+    <div>${html}</div>
+    <p><a href="#" onclick="showPage('blog')">← Back to Blog</a></p>
   `;
 
   blogGallery.classList.add("hidden");
   blogPostContainer.classList.remove("hidden");
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-// =============================================================
-// SAFARI FIX — FORCE HASH CHANGE FOR BLOG LINKS
-// =============================================================
-document.addEventListener("click", (e) => {
-  if (e.target.classList.contains("read-more")) {
-    e.preventDefault();
-    const slug = e.target.dataset.slug;
-    window.location.hash = `#blog/${slug}`;
-  }
-});
-
-
-// =============================================================
-// HASH ROUTER (FIXED)
-// =============================================================
-async function routeFromHash() {
-  let hash = window.location.hash || "#about";
-
-  // Remove trailing slash
-  hash = hash.replace(/\/+$/, "");
-
-// --------------------------
-// Bulletproof Blog Post Route
-// --------------------------
-if (hash.startsWith("#blog/")) {
-
-  // Remove "#blog/"
-  let slug = hash.slice(6);
-
-  // Remove trailing slashes
-  slug = slug.replace(/\/+$/, "");
-
-  // Remove query params
-  slug = slug.split("?")[0];
-
-  // Normalize unicode dashes (Safari sometimes rewrites them)
-  slug = slug.replace(/–/g, "-").replace(/—/g, "-");
-
-  // Decode URL encoding (spaces, etc.)
-  slug = decodeURIComponent(slug);
-
-  const posts = await loadBlogIndex();
-  const entry = posts.find(p => p.slug === slug);
-
-  if (entry) {
-    showPage("blog");
-    setActiveNav("#blog");
-    await renderBlogPost(entry.file);
-    return;
-  }
 }
 
 
 
-  // --------------------------
-  // Blog list
-  // --------------------------
-  if (hash === "#blog") {
-    showPage("blog");
-    setActiveNav("#blog");
-    renderBlogList();
-    return;
-  }
-
-  // --------------------------
-  // For food
-  // --------------------------
-
-  if (hash === "#food") {
-    showPage("food");
-    setActiveNav("#food");
-    initRestaurantPage();   // <------ RESTORED RESTAURANT HANDLER
-    return;
-}
 
 
-  // --------------------------
-  // Static pages
-  // --------------------------
-  const pages = ["about", "publications"];
-
-  for (const p of pages) {
-    if (hash === `#${p}`) {
-      showPage(p);
-      setActiveNav(`#${p}`);
-      return;
-    }
-  }
-
-  // Fallback
-  showPage("about");
-  setActiveNav("#about");
-}
-
-// =============================================================
-// SAFER LOAD EVENTS
-// (DOMContentLoaded → router AFTER JSON loads)
-// =============================================================
-window.addEventListener("DOMContentLoaded", async () => {
-  await loadBlogIndex();  // preload to avoid race conditions
-  routeFromHash();
-});
-
-window.addEventListener("hashchange", routeFromHash);
