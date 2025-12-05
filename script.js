@@ -133,6 +133,22 @@ document.addEventListener("DOMContentLoaded", () => {
 // BLOG SYSTEM
 // =============================================================
 
+// =============================================================
+// SAFARI FIX — FORCE HASH CHANGE FOR BLOG LINKS
+// =============================================================
+document.addEventListener("click", (e) => {
+  if (e.target.classList.contains("read-more")) {
+    e.preventDefault();
+
+    const slug = e.target.dataset.slug;
+
+    // Safari refuses to follow hash links in dynamic HTML
+    // This manually forces the correct URL and triggers the router
+    window.location.hash = `#blog/${slug}`;
+  }
+});
+
+
 // Cache blog index (avoids race conditions)
 let BLOG_INDEX = null;
 
@@ -171,7 +187,7 @@ async function renderBlogList() {
     card.innerHTML = `
       <h3>${post.title}</h3>
       <p class="date">${post.date}</p>
-      <a href="#blog/${encodeURIComponent(post.slug)}">Read more →</a>
+      <a href="#" data-slug="${post.slug}" class="read-more">Read more →</a>
     `;
 
     blogGallery.appendChild(card);
