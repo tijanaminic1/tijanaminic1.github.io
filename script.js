@@ -191,7 +191,7 @@ async function renderBlogList() {
     `;
 
     blogGallery.appendChild(card);
-  });
+});
 }
 
 // Render a single blog post
