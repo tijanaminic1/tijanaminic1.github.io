@@ -1,33 +1,31 @@
-// ------------------------------
+// =====================================================
 // PAGE SWITCHING
-// ------------------------------
+// =====================================================
+
 function showPage(pageId) {
   const pages = document.querySelectorAll('.page');
 
-  // hide all pages
   pages.forEach(page => page.classList.add('hidden'));
 
-  // show selected page
   const page = document.getElementById(pageId);
   if (page) page.classList.remove('hidden');
 
-  // BLOG PAGE
   if (pageId === "blog") {
     if (blogGallery) blogGallery.classList.remove("hidden");
     if (blogPostContainer) blogPostContainer.classList.add("hidden");
     renderBlogList();
   }
 
-  // FOOD PAGE
   if (pageId === "food") {
     setTimeout(initMap, 100);
   }
 }
 
 
-// ------------------------------
+// =====================================================
 // PUBLICATION SORTING
-// ------------------------------
+// =====================================================
+
 document.getElementById("sort-options").addEventListener("change", function () {
   const sortOption = this.value;
   const gallery = document.getElementById("publication-gallery");
@@ -43,9 +41,10 @@ document.getElementById("sort-options").addEventListener("change", function () {
 });
 
 
-// ------------------------------
+// =====================================================
 // NAV ACTIVE STATE
-// ------------------------------
+// =====================================================
+
 const navLinks = document.querySelectorAll('nav ul li');
 navLinks.forEach(link => {
   link.addEventListener('click', function() {
@@ -55,9 +54,10 @@ navLinks.forEach(link => {
 });
 
 
-// ------------------------------
+// =====================================================
 // FOOD MAP + RESTAURANT LIST
-// ------------------------------
+// =====================================================
+
 let map;
 let reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
 let mapInitialized = false;
@@ -111,12 +111,14 @@ function initRestaurantList() {
     listContainer.appendChild(ul);
   });
 }
+
 document.addEventListener('DOMContentLoaded', initRestaurantList);
 
 
-// ------------------------------
+// =====================================================
 // BLOG SYSTEM
-// ------------------------------
+// =====================================================
+
 const blogGallery = document.getElementById("blog-gallery");
 const blogPostContainer = document.getElementById("blog-post");
 const blogSortSelect = document.getElementById("blog-sort-options");
@@ -127,9 +129,10 @@ async function loadBlogIndex() {
 }
 
 
-// ------------------------------
+// =====================================================
 // BLOG LIST WITH PREVIEWS
-// ------------------------------
+// =====================================================
+
 async function renderBlogList(sort = "oldest") {
   let posts = await loadBlogIndex();
 
@@ -144,7 +147,7 @@ async function renderBlogList(sort = "oldest") {
 
   for (const post of posts) {
     try {
-      const res = await fetch(`blog-posts/${post.file}`);
+      const res = await fetch(`blog-posts/${post.file}?v=${Date.now()}`);
       if (!res.ok) continue;
 
       const text = await res.text();
@@ -156,13 +159,13 @@ async function renderBlogList(sort = "oldest") {
         mdBody = text.replace(fm[0], "").trimStart();
       }
 
-      // Remove H1 title
+      // Remove H1 title if present
       if (mdBody.startsWith("# ")) {
         const i = mdBody.indexOf("\n");
         if (i !== -1) mdBody = mdBody.slice(i + 1).trimStart();
       }
 
-      // Extract first section until next “##”
+      // Extract preview
       let end = mdBody.search(/\n## /);
       if (end === -1) end = mdBody.length;
       let firstSection = mdBody.slice(0, end).trim();
@@ -171,15 +174,13 @@ async function renderBlogList(sort = "oldest") {
 
       const previewHTML = converter.makeHtml(firstSection);
 
-      // ⬇️ THIS IS THE KEY PART YOU'RE ASKING ABOUT ⬇️
-      // Slugs added + Read More link updates URL — BUT no router yet!
       const div = document.createElement("div");
       div.className = "blog-card";
       div.innerHTML = `
         <h3>${post.title}</h3>
         <p class="date">${post.date}</p>
         <div class="preview">${previewHTML}</div>
-        <a href="#blog/${post.slug}" data-file="${post.file}" class="open-post">Read More →</a>
+        <a href="?post=${post.slug}" class="open-post">Read More →</a>
       `;
 
       blogGallery.appendChild(div);
@@ -188,32 +189,35 @@ async function renderBlogList(sort = "oldest") {
       console.error("Preview error:", err);
     }
   }
-
-  // Attach events
-  document.querySelectorAll(".open-post").forEach(link => {
-    link.onclick = async (e) => {
-      e.preventDefault();
-      await renderBlogPost(link.dataset.file);
-    };
-  });
 }
 
 
-// ------------------------------
+// =====================================================
 // RENDER FULL BLOG POST
-// ------------------------------
+// =====================================================
+
+async function renderBlogPostBySlug(slug) {
+  const posts = await loadBlogIndex();
+  const post = posts.find(p => p.slug === slug);
+  if (!post) return;
+
+  renderBlogPost(post.file);
+}
+
 async function renderBlogPost(filename) {
-  const res = await fetch(`blog-posts/${filename}`);
+  const res = await fetch(`blog-posts/${filename}?v=${Date.now()}`);
   if (!res.ok) return console.error("Cannot load:", filename);
 
   const text = await res.text();
 
   const fm = text.match(/---([\s\S]*?)---/);
-  const mdContent = text.replace(fm[0], "");
+  const mdContent = fm ? text.replace(fm[0], "") : text;
 
-  const meta = Object.fromEntries(
-    fm[1].trim().split("\n").map(line => line.split(": ").map(s => s.trim()))
-  );
+  const meta = fm
+    ? Object.fromEntries(
+        fm[1].trim().split("\n").map(line => line.split(": ").map(s => s.trim()))
+      )
+    : { title: "", date: "" };
 
   const converter = new showdown.Converter();
   const html = converter.makeHtml(mdContent);
@@ -222,42 +226,34 @@ async function renderBlogPost(filename) {
     <h2>${meta.title}</h2>
     <p>${meta.date}</p>
     <div>${html}</div>
-    <p><a href="#" onclick="showPage('blog')">← Back to Blog</a></p>
+    <p><a href="?blog">← Back to Blog</a></p>
   `;
 
   blogGallery.classList.add("hidden");
   blogPostContainer.classList.remove("hidden");
 }
 
-// This is the newly added part (that always breaks)
 
-window.addEventListener("hashchange", handleHashRouting);
-window.addEventListener("DOMContentLoaded", handleHashRouting);
+// =====================================================
+// URL ROUTER — FINAL FIX
+// =====================================================
 
-function handleHashRouting() {
-  const hash = window.location.hash;
+function handleRouting() {
+  const params = new URLSearchParams(window.location.search);
 
-  // Case 1: Direct post link → #blog/<slug>
-  if (hash.startsWith("#blog/")) {
-    const slug = hash.replace("#blog/", "");
-
-    loadBlogIndex().then(posts => {
-      const post = posts.find(p => p.slug === slug);
-      if (post) {
-        showPage("blog");
-        renderBlogPost(post.file);
-      }
-    });
-
+  // Direct blog post
+  if (params.has("post")) {
+    showPage("blog");
+    renderBlogPostBySlug(params.get("post"));
     return;
   }
 
-  // Case 2: Just #blog → Show the blog list
-  if (hash === "#blog") {
+  // Blog page
+  if (params.has("blog")) {
     showPage("blog");
     return;
   }
 }
 
-
-
+window.addEventListener("DOMContentLoaded", handleRouting);
+window.addEventListener("popstate", handleRouting);
