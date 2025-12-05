@@ -3,8 +3,6 @@ title: My First PhD Semester - What No One Talks About
 date: 2025-12-01
 ---
 
-# My First PhD Semester - What No One Talks About
-
 
 ## Why I'm writing this
 
