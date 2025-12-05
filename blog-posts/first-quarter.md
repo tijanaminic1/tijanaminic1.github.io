@@ -52,7 +52,7 @@ This is something that really messes with me— the feeling of everpresent guilt
 
 Yet, that guilt is always somewhere in the back of my mind. I just came back from Thanksgiving break, not having done much work, and for valid reasons, but I still feel horrible about it. There is always something to do, something to learn, and (in my case) something to catch up on. So every moment I’m not working feels like a moment wasted, like I’m falling further behind in a race no one asked me to run.
 
-I was also born and raised in Eastern Europe, so my mindset leans more towards "work to live" than "live to work". I will only ever put work above my life and family if that works brings me immense personal satisfaction and gives me a reason to believe I am contributing something meaningful to humanity. So, being in the US, a largely capitalist society, and surrounded with the so-called "founder culture" (lock in, grind, Linkedin influencers, "living-in-sf" shitposters), I've had to adjust my mindset to work with the environment, while maintaining my sanity. Still learning how to stay grounded while living inside a culture whose default setting is overwork.
+I was also born and raised in Eastern Europe, so my mindset leans more towards "work to live" than "live to work". I will only ever put work above my life and family if that work brings me immense personal satisfaction and gives me a reason to believe I am contributing something meaningful to humanity. So, being in the US, a largely capitalist society, and surrounded with the so-called "founder culture" (lock in, grind, Linkedin influencers, "living-in-sf" shitposters), I've had to adjust my mindset to work with the environment, while maintaining my sanity. Still learning how to stay grounded while living inside a culture whose default setting is overwork.
 
 That said, the guilt extends to the other side of the scale too. You essentially pause your long-term life plans for five years to get this degree. You might even have to move — like I did — across the country (again). There are certain future-plans-sacrifices I’ve had to make, like delaying having children, something I always imagined doing before 30. Not being able to be fully financially independent from my parents, even with a PhD stipend. Not being able to build meaningful savings with the love of my life.
 
@@ -132,8 +132,3 @@ This post focused in on the more difficult patterns because they can get very lo
 I hope my words bring even a small amount of clarity or comfort to your own journey, whoever you are and whatever you’re doing.
 
 *Good luck!*
-
-
-If you would like to share this post, please use this link: tijanaminic1.github.io/#blog/first-quarter
-
- I am terrified of JavaScript and it's been breaking my links, so until I find a solution, this is the one...
