@@ -79,7 +79,7 @@ function initMap() {
   mapInitialized = true;
 }
 
-function populateRestaurantList() {
+function initRestaurantList() {
   const listContainer = document.getElementById('restaurant-links');
   if (!listContainer) return;
 
@@ -111,7 +111,7 @@ function populateRestaurantList() {
     listContainer.appendChild(ul);
   });
 }
-document.addEventListener('DOMContentLoaded', populateRestaurantList);
+document.addEventListener('DOMContentLoaded', initRestaurantList);
 
 
 // ------------------------------
