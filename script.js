@@ -133,20 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // BLOG SYSTEM
 // =============================================================
 
-// =============================================================
-// SAFARI FIX — FORCE HASH CHANGE FOR BLOG LINKS
-// =============================================================
-document.addEventListener("click", (e) => {
-  if (e.target.classList.contains("read-more")) {
-    e.preventDefault();
 
-    const slug = e.target.dataset.slug;
-
-    // Safari refuses to follow hash links in dynamic HTML
-    // This manually forces the correct URL and triggers the router
-    window.location.hash = `#blog/${slug}`;
-  }
-});
 
 
 // Cache blog index (avoids race conditions)
@@ -223,6 +210,18 @@ async function renderBlogPost(filename) {
 
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
+
+// =============================================================
+// SAFARI FIX — FORCE HASH CHANGE FOR BLOG LINKS
+// =============================================================
+document.addEventListener("click", (e) => {
+  if (e.target.classList.contains("read-more")) {
+    e.preventDefault();
+    const slug = e.target.dataset.slug;
+    window.location.hash = `#blog/${slug}`;
+  }
+});
+
 
 // =============================================================
 // HASH ROUTER (FIXED)
