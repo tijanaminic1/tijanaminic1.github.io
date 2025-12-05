@@ -135,3 +135,6 @@ This post focused in on the more difficult patterns because they can get very lo
 I hope my words bring even a small amount of clarity or comfort to your own journey, whoever you are and whatever you’re doing.
 
 *Good luck!*
+
+
+[If you would like to share this post, please use this link: tijanaminic1.github.io/#blog/first-quarter . I am terrified of JavaScript and it's been breaking my links, so until I find a solution, this is the one...]
