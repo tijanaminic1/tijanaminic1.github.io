@@ -1,128 +1,35 @@
 // =====================================================
-// PAGE SWITCHING
+// ELEMENTS
 // =====================================================
+const blogGallery = document.getElementById("blog-gallery");
+const blogPostContainer = document.getElementById("blog-post");
 
+
+// =====================================================
+// PAGE SWITCHER
+// =====================================================
 function showPage(pageId) {
-  const pages = document.querySelectorAll('.page');
-
-  pages.forEach(page => page.classList.add('hidden'));
+  const pages = document.querySelectorAll(".page");
+  pages.forEach(p => p.classList.add("hidden"));
 
   const page = document.getElementById(pageId);
-  if (page) page.classList.remove('hidden');
+  if (page) page.classList.remove("hidden");
 
   if (pageId === "blog") {
-    if (blogGallery) blogGallery.classList.remove("hidden");
-    if (blogPostContainer) blogPostContainer.classList.add("hidden");
+    blogGallery.classList.remove("hidden");
+    blogPostContainer.classList.add("hidden");
     renderBlogList();
   }
 
   if (pageId === "food") {
-    setTimeout(initMap, 100);
+    setTimeout(initMap, 200);
   }
 }
 
 
 // =====================================================
-// PUBLICATION SORTING
+// BLOG INDEX LOADER
 // =====================================================
-
-document.getElementById("sort-options").addEventListener("change", function () {
-  const sortOption = this.value;
-  const gallery = document.getElementById("publication-gallery");
-  const publications = Array.from(gallery.querySelectorAll(".publication"));
-
-  publications.sort((a, b) => {
-    const dateA = new Date(a.getAttribute("data-date"));
-    const dateB = new Date(b.getAttribute("data-date"));
-    return sortOption === "newest" ? dateB - dateA : dateA - dateB;
-  });
-
-  publications.forEach(pub => gallery.appendChild(pub));
-});
-
-
-// =====================================================
-// NAV ACTIVE STATE
-// =====================================================
-
-const navLinks = document.querySelectorAll('nav ul li');
-navLinks.forEach(link => {
-  link.addEventListener('click', function() {
-    navLinks.forEach(link => link.classList.remove('active'));
-    this.classList.add('active');
-  });
-});
-
-
-// =====================================================
-// FOOD MAP + RESTAURANT LIST
-// =====================================================
-
-let map;
-let reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
-let mapInitialized = false;
-
-function initMap() {
-  if (mapInitialized) return;
-
-  map = L.map('map').setView([40.730610, -73.935242], 10);
-
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: 'Map data © OpenStreetMap contributors'
-  }).addTo(map);
-
-  restaurantPins.forEach(({ lat, lng, name, blogUrl }) => {
-    const popupHTML = `<a href="${blogUrl}" target="_blank">${name}</a>`;
-    L.marker([lat, lng]).addTo(map).bindPopup(popupHTML);
-  });
-
-  mapInitialized = true;
-}
-
-function initRestaurantList() {
-  const listContainer = document.getElementById('restaurant-links');
-  if (!listContainer) return;
-
-  listContainer.innerHTML = '';
-
-  const grouped = {};
-  restaurantPins.forEach(r => {
-    if (!grouped[r.city]) grouped[r.city] = [];
-    grouped[r.city].push(r);
-  });
-
-  Object.keys(grouped).sort().forEach(city => {
-    const h4 = document.createElement('h4');
-    h4.textContent = city;
-    listContainer.appendChild(h4);
-
-    const ul = document.createElement('ul');
-    ul.className = 'restaurant-subgroup';
-
-    grouped[city].forEach(r => {
-      const li = document.createElement('li');
-      const a = document.createElement('a');
-      a.href = r.blogLink;
-      a.textContent = r.name;
-      li.appendChild(a);
-      ul.appendChild(li);
-    });
-
-    listContainer.appendChild(ul);
-  });
-}
-
-document.addEventListener('DOMContentLoaded', initRestaurantList);
-
-
-// =====================================================
-// BLOG SYSTEM
-// =====================================================
-
-const blogGallery = document.getElementById("blog-gallery");
-const blogPostContainer = document.getElementById("blog-post");
-const blogSortSelect = document.getElementById("blog-sort-options");
-
 async function loadBlogIndex() {
   const res = await fetch("blog_index.json");
   return await res.json();
@@ -130,12 +37,10 @@ async function loadBlogIndex() {
 
 
 // =====================================================
-// BLOG LIST WITH PREVIEWS
+// BLOG LIST RENDERER
 // =====================================================
-
 async function renderBlogList(sort = "oldest") {
   let posts = await loadBlogIndex();
-
   posts.sort((a, b) =>
     sort === "newest"
       ? new Date(b.date) - new Date(a.date)
@@ -146,56 +51,41 @@ async function renderBlogList(sort = "oldest") {
   const converter = new showdown.Converter();
 
   for (const post of posts) {
-    try {
-      const res = await fetch(`blog-posts/${post.file}?v=${Date.now()}`);
-      if (!res.ok) continue;
+    const res = await fetch(`blog-posts/${post.file}?v=${Date.now()}`);
+    if (!res.ok) continue;
 
-      const text = await res.text();
+    let md = await res.text();
 
-      // Remove frontmatter
-      let mdBody = text;
-      const fm = text.match(/---([\s\S]*?)---/);
-      if (fm?.[0]) {
-        mdBody = text.replace(fm[0], "").trimStart();
-      }
+    const fm = md.match(/---([\s\S]*?)---/);
+    if (fm) md = md.replace(fm[0], "").trimStart();
 
-      // Remove H1 title if present
-      if (mdBody.startsWith("# ")) {
-        const i = mdBody.indexOf("\n");
-        if (i !== -1) mdBody = mdBody.slice(i + 1).trimStart();
-      }
-
-      // Extract preview
-      let end = mdBody.search(/\n## /);
-      if (end === -1) end = mdBody.length;
-      let firstSection = mdBody.slice(0, end).trim();
-
-      if (!firstSection) firstSection = mdBody.slice(0, 400);
-
-      const previewHTML = converter.makeHtml(firstSection);
-
-      const div = document.createElement("div");
-      div.className = "blog-card";
-      div.innerHTML = `
-        <h3>${post.title}</h3>
-        <p class="date">${post.date}</p>
-        <div class="preview">${previewHTML}</div>
-        <a href="?post=${post.slug}" class="open-post">Read More →</a>
-      `;
-
-      blogGallery.appendChild(div);
-
-    } catch (err) {
-      console.error("Preview error:", err);
+    if (md.startsWith("# ")) {
+      md = md.slice(md.indexOf("\n") + 1).trimStart();
     }
+
+    let next = md.search(/\n## /);
+    if (next === -1) next = md.length;
+    const preview = md.slice(0, next);
+
+    const previewHTML = converter.makeHtml(preview);
+
+    const card = document.createElement("div");
+    card.className = "blog-card";
+    card.innerHTML = `
+      <h3>${post.title}</h3>
+      <p class="date">${post.date}</p>
+      <div class="preview">${previewHTML}</div>
+      <a href="#blog/${post.slug}" class="open-post">Read More →</a>
+    `;
+
+    blogGallery.appendChild(card);
   }
 }
 
 
 // =====================================================
-// RENDER FULL BLOG POST
+// FULL BLOG POST RENDER
 // =====================================================
-
 async function renderBlogPostBySlug(slug) {
   const posts = await loadBlogIndex();
   const post = posts.find(p => p.slug === slug);
@@ -206,27 +96,25 @@ async function renderBlogPostBySlug(slug) {
 
 async function renderBlogPost(filename) {
   const res = await fetch(`blog-posts/${filename}?v=${Date.now()}`);
-  if (!res.ok) return console.error("Cannot load:", filename);
+  if (!res.ok) return;
 
-  const text = await res.text();
+  let md = await res.text();
 
-  const fm = text.match(/---([\s\S]*?)---/);
-  const mdContent = fm ? text.replace(fm[0], "") : text;
-
+  const fm = md.match(/---([\s\S]*?)---/);
   const meta = fm
-    ? Object.fromEntries(
-        fm[1].trim().split("\n").map(line => line.split(": ").map(s => s.trim()))
-      )
+    ? Object.fromEntries(fm[1].trim().split("\n").map(line => line.split(": ").map(x => x.trim())))
     : { title: "", date: "" };
 
+  if (fm) md = md.replace(fm[0], "");
+
   const converter = new showdown.Converter();
-  const html = converter.makeHtml(mdContent);
+  const html = converter.makeHtml(md);
 
   blogPostContainer.innerHTML = `
     <h2>${meta.title}</h2>
     <p>${meta.date}</p>
     <div>${html}</div>
-    <p><a href="?blog">← Back to Blog</a></p>
+    <p><a href="#blog">← Back to Blog</a></p>
   `;
 
   blogGallery.classList.add("hidden");
@@ -235,25 +123,92 @@ async function renderBlogPost(filename) {
 
 
 // =====================================================
-// URL ROUTER — FINAL FIX
+// HASH ROUTER (Option B + default = about)
 // =====================================================
+function handleHash() {
+  const hash = window.location.hash;
 
-function handleRouting() {
-  const params = new URLSearchParams(window.location.search);
-
-  // Direct blog post
-  if (params.has("post")) {
-    showPage("blog");
-    renderBlogPostBySlug(params.get("post"));
+  // DEFAULT = ABOUT PAGE
+  if (!hash || hash === "" || hash === "#") {
+    showPage("about");
     return;
   }
 
-  // Blog page
-  if (params.has("blog")) {
+  // BLOG POST: #blog/slug
+  if (hash.startsWith("#blog/")) {
+    const slug = hash.replace("#blog/", "");
+    showPage("blog");
+    renderBlogPostBySlug(slug);
+    return;
+  }
+
+  // BLOG LIST
+  if (hash === "#blog") {
     showPage("blog");
     return;
   }
+
+  // OTHER PAGES
+  if (hash === "#about") {
+    showPage("about");
+    return;
+  }
+
+  if (hash === "#publications") {
+    showPage("publications");
+    return;
+  }
+
+  if (hash === "#food") {
+    showPage("food");
+    return;
+  }
+
+  // FALLBACK
+  showPage("about");
 }
 
-window.addEventListener("DOMContentLoaded", handleRouting);
-window.addEventListener("popstate", handleRouting);
+window.addEventListener("hashchange", handleHash);
+window.addEventListener("DOMContentLoaded", handleHash);
+
+
+// =====================================================
+// PUBLICATIONS SORT
+// =====================================================
+document.getElementById("sort-options").addEventListener("change", function () {
+  const gallery = document.getElementById("publication-gallery");
+  const pubs = Array.from(gallery.querySelectorAll(".publication"));
+  const sort = this.value;
+
+  pubs.sort((a, b) =>
+    sort === "newest"
+      ? new Date(b.dataset.date) - new Date(a.dataset.date)
+      : new Date(a.dataset.date) - new Date(b.dataset.date)
+  );
+
+  pubs.forEach(pub => gallery.appendChild(pub));
+});
+
+
+// =====================================================
+// FOOD MAP INIT
+// =====================================================
+let map;
+let mapInitialized = false;
+
+function initMap() {
+  if (mapInitialized) return;
+  mapInitialized = true;
+
+  map = L.map("map").setView([40.730610, -73.935242], 10);
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "Map data © OpenStreetMap contributors",
+  }).addTo(map);
+
+  if (window.restaurantPins) {
+    restaurantPins.forEach(r => {
+      L.marker([r.lat, r.lng]).addTo(map).bindPopup(`<a href="${r.blogUrl}" target="_blank">${r.name}</a>`);
+    });
+  }
+}
