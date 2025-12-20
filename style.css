@@ -306,6 +306,7 @@ body {
   box-shadow: 0 3px 8px rgba(0,0,0,0.08);
   transition: background-color 0.2s ease, box-shadow 0.2s ease;
   font-family: 'Times New Roman', Times, serif;
+  margin-bottom: 30px;
 }
 
 #blog-gallery .blog-card:hover {

@@ -39,7 +39,7 @@ async function loadBlogIndex() {
 // =====================================================
 // BLOG LIST RENDERER
 // =====================================================
-async function renderBlogList(sort = "oldest") {
+async function renderBlogList(sort = "newest") {
   let posts = await loadBlogIndex();
   posts.sort((a, b) =>
     sort === "newest"
