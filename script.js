@@ -159,10 +159,6 @@ function handleHash() {
     return;
   }
 
-  if (hash === "#food") {
-    showPage("food");
-    return;
-  }
 
   // FALLBACK
   showPage("about");
