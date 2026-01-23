@@ -188,27 +188,3 @@ document.getElementById("sort-options").addEventListener("change", function () {
 
   pubs.forEach(pub => gallery.appendChild(pub));
 });
-
-
-// =====================================================
-// FOOD MAP INIT
-// =====================================================
-let map;
-let mapInitialized = false;
-
-function initMap() {
-  if (mapInitialized) return;
-  mapInitialized = true;
-
-  map = L.map("map").setView([40.730610, -73.935242], 10);
-
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: "Map data © OpenStreetMap contributors",
-  }).addTo(map);
-
-  if (window.restaurantPins) {
-    restaurantPins.forEach(r => {
-      L.marker([r.lat, r.lng]).addTo(map).bindPopup(`<a href="${r.blogUrl}" target="_blank">${r.name}</a>`);
-    });
-  }
-}
