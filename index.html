@@ -7,12 +7,9 @@
 
   <link rel="stylesheet" href="style.css" />
 
-  <!-- Markdown converter -->
+  <!-- Markdown converters -->
   <script src="https://cdn.jsdelivr.net/npm/showdown/dist/showdown.min.js"></script>
-
-  <!-- Leaflet for food map -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 
 <body>
@@ -27,6 +24,7 @@
       <li><a href="#about">About Me</a></li>
       <li><a href="#publications">Publications</a></li>
       <li><a href="#blog">Thoughts</a></li>
+      <li><a href="#pinboard">Pin Board</a></li>
     </ul>
   </nav>
 </header>
@@ -213,6 +211,16 @@
     <div id="blog-post" class="hidden"></div>
   </section>
 
+    <!-- =========================================================
+        PIN BOARD
+    ========================================================== -->
+    <section id="pin" class="page hidden">
+      <h2>Things that I can't recommend enough - just scroll and enjoy</h2>
+      <div id="likes-content">Loading…</div>
+    </section>
+
+
+
 
   </main>
 
@@ -220,8 +228,8 @@
     <p>&copy; 2025 Tijana Minić. All Rights Reserved.</p>
   </footer>
 
-  <script src="restaurants.js"></script>
   <script src="script.js"></script>
+
 
 </body>
 </html>

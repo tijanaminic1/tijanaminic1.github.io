@@ -413,6 +413,25 @@ body {
 }
 
 
+/* For pin board */
+
+#likes-content {
+  max-width: 760px;
+  line-height: 1.55;
+}
+
+#likes-content h1,
+#likes-content h2,
+#likes-content h3 {
+  margin-top: 1.2rem;
+}
+
+#likes-content ul {
+  padding-left: 1.25rem;
+}
+
+
+
 
 
 

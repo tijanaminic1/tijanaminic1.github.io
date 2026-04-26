@@ -21,10 +21,11 @@ function showPage(pageId) {
     renderBlogList();
   }
 
-  if (pageId === "food") {
-    setTimeout(initMap, 200);
+  if (pageId === "pin") {
+    renderLikesPage();
   }
 }
+
 
 
 // =====================================================
@@ -159,6 +160,13 @@ function handleHash() {
     return;
   }
 
+  if (hash === "#pinboard") {
+    showPage("pin");
+    return;
+  }
+  
+
+
 
   // FALLBACK
   showPage("about");
@@ -184,3 +192,32 @@ document.getElementById("sort-options").addEventListener("change", function () {
 
   pubs.forEach(pub => gallery.appendChild(pub));
 });
+
+
+// =====================================================
+// BLOG SORT
+// =====================================================
+document.getElementById("blog-sort-options").addEventListener("change", function () {
+  renderBlogList(this.value);
+});
+
+
+// For pinboard
+async function renderLikesPage() {
+  const container = document.getElementById("likes-content");
+  if (!container) return;
+
+  // Optional: don’t re-fetch if already loaded
+  if (container.dataset.loaded === "true") return;
+
+  try {
+    const res = await fetch("likes.md", { cache: "no-store" });
+    if (!res.ok) throw new Error(`Failed to load likes.md (${res.status})`);
+    const md = await res.text();
+    container.innerHTML = marked.parse(md);
+    container.dataset.loaded = "true";
+  } catch (e) {
+    container.textContent = `Couldn’t load likes.md`;
+  }
+}
+
