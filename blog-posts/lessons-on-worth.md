@@ -1,7 +1,3 @@
-
-# A deeply uncomfortable conversation about self-worth
-
-
 ## When the outside world goes quiet and you cannot avoid yourself anymore
 
 It has been incredibly hard for me to write this year. I've been writing more than ever, but I've had an enormous influx of thoughts and lessons that I had to digest, and maneuvering with them in a coherent way has been one of the most challenging parts of my adulthood thus far. I turn 25 in less than a month, and they say it's the age your prefrontal cortex is finally done baking, so maybe that's why my brain's been working extra hard these past couple of months.
